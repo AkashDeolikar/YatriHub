@@ -1,0 +1,19 @@
+You now have:
+
+🔐 JWT Authentication
+
+👤 Role-based access (ADMIN)
+
+🏨 Room booking system
+
+🛑 Overlap prevention (no double booking)
+
+💳 Stripe Checkout integration
+
+🔔 Webhook confirmation
+
+❌ Cancel booking
+
+📊 Admin dashboard stats
+
+🧾 User booking dashboard

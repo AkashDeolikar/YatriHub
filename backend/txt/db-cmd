@@ -1,0 +1,70 @@
+How To Make Admin User
+
+Go into database:
+
+docker exec -it hotel_db psql -U postgres -d hotel_booking
+
+
+Then run:
+
+UPDATE "User"
+SET role = 'ADMIN'
+WHERE email = 'test@example2.com';
+
+
+If successful, you will see:
+
+UPDATE 1
+
+
+That means 1 row updated.
+
+🔎 Verify
+
+Run:
+
+SELECT email, role FROM "User";
+
+
+You should see:
+
+test@example2.com | ADMIN
+
+🔥 IMPORTANT
+
+Now you must LOGIN AGAIN.
+
+Because your old JWT token still contains:
+
+role: USER
+
+
+JWT tokens are static after created.
+
+So:
+
+Login again
+
+Get new accessToken
+
+Call admin route with new token
+
+🎯 Expected Result
+
+Now:
+
+GET /bookings/admin/all
+
+
+Should return booking data (or empty array).
+
+No 401.
+No 403.
+
+🧠 What You Just Learned
+
+401 = no token
+403 = wrong role
+200 = correct role
+
+That is professional backend auth flow.

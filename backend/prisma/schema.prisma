@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BookingStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  CANCELLED
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  password     String
+  role         Role     @default(USER)
+  refreshToken String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  createdAt    DateTime @default(now())
+  bookings     Booking[]
+  foodOrders FoodOrder[]
+  flightBookings  FlightBooking[]
+}
+
+model Room {
+  id        String    @id @default(uuid())
+  name      String
+  price     Float
+  createdAt DateTime  @default(now())
+
+  bookings  Booking[]
+}
+
+model Booking {
+  id        String        @id @default(uuid())
+  userId    String
+  roomId    String
+  checkIn   DateTime
+  checkOut  DateTime
+  totalAmount Float
+  status    BookingStatus @default(PENDING_PAYMENT)
+  stripeSessionId    String?  @unique
+  stripePaymentId    String?  @unique
+  paidAt    DateTime?
+  createdAt DateTime      @default(now())
+  expiresAt  DateTime?
+  user User @relation(fields: [userId], references: [id])
+  room Room @relation(fields: [roomId], references: [id])
+}
+
+model StripeEvent {
+  id        String   @id
+  createdAt DateTime @default(now())
+}
+
+model FoodOrder {
+  id        String      @id @default(uuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  total     Float
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  stripeSessionId String? @unique
+  items     FoodOrderItem[]
+
+  @@index([userId])
+}
+
+model FoodOrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  name      String
+  price     Float
+  quantity  Int
+
+  order     FoodOrder @relation(fields: [orderId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+
+enum BusPaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+model Bus {
+  id             Int      @id @default(autoincrement())
+  name           String
+  busNo          String   @unique
+  type           String
+  departure      String
+  arrival        String
+  price          Int
+  totalSeats     Int      @default(24)
+  availableSeats Int      @default(24)
+  createdAt      DateTime @default(now())
+
+  bookings       BusBooking[]
+}
+
+model BusBooking {
+  id              Int      @id @default(autoincrement())
+  bookingId       String   @unique
+  busId           Int
+  seats           Int[]
+  passengerName   String
+  passengerAge    Int
+  passengerGender String
+  totalAmount     Int
+  paymentStatus   BusPaymentStatus @default(PENDING)
+  createdAt       DateTime @default(now())
+
+  bus Bus @relation(fields: [busId], references: [id])
+}
+
+
+enum FlightBookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model FlightBooking {
+  id          String        @id @default(uuid())
+  flightNo    String
+  airline     String
+  from        String
+  to          String
+  departure   DateTime
+  arrival     DateTime
+  totalAmount Float
+  pnr         String        @unique
+
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+
+  passengers  Passenger[]
+  seats       SeatAssignment[]
+
+  createdAt   DateTime      @default(now())
+}
+
+model Passenger {
+  id        String   @id @default(uuid())
+  bookingId String
+  title     String
+  firstName String
+  lastName  String
+  gender    String
+  dob       DateTime
+  mealPref  String?
+  baggage   String?
+
+  booking FlightBooking @relation(fields: [bookingId], references: [id])
+  seats       SeatAssignment[]
+}
+
+model SeatAssignment {
+  id          String   @id @default(uuid())
+  bookingId   String
+  passengerId String
+  seatNumber  String
+
+  booking   FlightBooking @relation(fields: [bookingId], references: [id])
+  passenger Passenger      @relation(fields: [passengerId], references: [id])
+
+  @@unique([bookingId, seatNumber])
+}

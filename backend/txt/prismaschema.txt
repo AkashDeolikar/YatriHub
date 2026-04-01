@@ -1,0 +1,218 @@
+Everything is actually working correctly now ✅
+
+Your containers are running — but you’re making one small mistake.
+
+❗ Why It Says "service not running"
+
+Look at this line:
+
+Attaching to hotel_backend, hotel_db
+
+Your terminal is currently attached to the running containers.
+
+When you type:
+
+docker compose exec hotel_backend ...
+
+You are typing it inside the same attached terminal session.
+
+That won’t work.
+
+✅ Correct Way To Do It
+Step 1 — Stop the attached session safely
+
+Press:
+
+CTRL + C
+
+This stops the foreground session (containers may stop too).
+
+Step 2 — Start containers in detached mode
+
+Run:
+
+docker compose up -d --build
+
+Important: -d means detached mode
+
+Now containers run in background.
+
+Step 3 — Confirm they are running
+docker compose ps
+
+You should see:
+
+hotel_backend   Up
+hotel_db        Up
+Step 4 — Now run Prisma migration
+docker compose exec hotel_backend npx prisma migrate dev --name add_food_order
+⚠️ BUT — IMPORTANT OBSERVATION
+
+Your logs already say:
+
+1 migration found in prisma/migrations
+No pending migrations to apply.
+
+That means:
+
+👉 Prisma thinks migration already ran
+👉 But FoodOrder table still does not exist
+
+This means your migration file does NOT contain FoodOrder.
+
+🚨 Real Root Problem
+
+You probably:
+
+Added FoodOrder model
+
+But never created a new migration
+
+Only generated client
+
+🔥 Proper Fix Now
+
+After containers are running in detached mode:
+
+Run:
+
+docker compose exec hotel_backend npx prisma migrate reset
+
+It will ask:
+
+Are you sure? All data will be lost.
+
+Type:
+
+y
+
+This will:
+
+• Drop database
+• Recreate schema
+• Apply ALL migrations
+• Rebuild tables
+
+🧠 Why Reset Works
+
+Because your DB volume already existed:
+
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+So old schema stayed.
+
+Reset forces clean rebuild.
+
+🎯 Final Clean Flow
+CTRL + C
+docker compose down
+docker compose up -d --build
+docker compose exec hotel_backend npx prisma migrate reset
+
+After that → FoodOrder table WILL exist.
+
+🏁 After Reset Test
+
+Run:
+
+docker compose exec hotel_backend npx prisma studio
+
+Check if FoodOrder appears.
+
+You’re very close now 💪
+Run reset and tell me what happens
+
+Perfect 👌 now I can see the real issue.
+
+Your containers are running fine:
+
+SERVICE        STATUS
+hotel_backend  Up
+hotel_db       Up
+
+But your docker compose exec is failing because of wrong service name.
+
+🚨 The Problem
+
+Look at your docker compose ps output carefully:
+
+SERVICE   app
+SERVICE   db
+
+Your backend service name is:
+
+app
+
+NOT:
+
+hotel_backend
+
+So when you run:
+
+docker compose exec hotel_backend ...
+
+Docker says:
+
+service "hotel_backend" is not running
+
+Because that service name does not exist.
+
+✅ Correct Command
+
+Use the SERVICE name (app), not container name.
+
+Run this:
+
+docker compose exec app npx prisma migrate dev --name add_food_order
+
+OR if you want reset:
+
+docker compose exec app npx prisma migrate reset
+🧠 Why This Happened
+
+In docker-compose.yml you likely have:
+
+services:
+  app:
+    container_name: hotel_backend
+
+So:
+
+hotel_backend = container name
+
+app = service name
+
+Docker Compose uses service name for exec, not container name.
+
+🎯 So Now Do This
+
+Since Prisma shows:
+
+1 migration found
+No pending migrations
+
+I strongly recommend:
+
+docker compose exec app npx prisma migrate reset
+
+Then type:
+
+y
+
+This will rebuild database properly and create FoodOrder.
+
+You’re literally one command away from fixing this 💪
+Run it and tell me what Prisma says.
+
+
+
+
+Correct Command
+
+Use the SERVICE name:
+
+docker compose exec app npx prisma migrate dev --name add_flight_booking
+
+Then:
+
+docker compose exec app npx prisma generate

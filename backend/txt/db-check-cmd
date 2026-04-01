@@ -1,0 +1,16 @@
+Check Database
+
+Run:
+
+docker exec -it hotel_db psql -U postgres -d hotel_booking
+
+
+Then:
+
+SELECT id, status, "stripePaymentId"
+FROM "Booking";
+
+
+You should see:
+
+CONFIRMED
