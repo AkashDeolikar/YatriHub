@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -71,3 +72,7 @@ export default defineConfig([
   },
 ])
 ```
+=======
+# YatriHub
+YatriHub is a production-ready travel booking platform that delivers end-to-end functionality—from trip planning and search to secure payments and analytics. With optimized backend performance, JWT-based authentication, Stripe integration, and Docker-based deployment, it demonstrates strong full-stack engineering and scalable system design.
+>>>>>>> dea5c319526466340aeced2cccbcd103260d754b
