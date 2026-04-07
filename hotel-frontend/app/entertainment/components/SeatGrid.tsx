@@ -54,70 +54,76 @@ export default function SeatGrid({ movie, show }: any) {
   };
 
   return (
-    <div className="text-white space-y-8">
+    <div className="text-white space-y-10 pb-32">
 
       {/* 🎬 SCREEN */}
-      <div className="text-center space-y-2">
-        <div className="h-2 bg-gradient-to-r from-gray-500 to-white rounded-full w-2/3 mx-auto" />
-        <p className="text-xs text-gray-400 tracking-widest">SCREEN</p>
+      <div className="text-center space-y-3">
+        <div className="h-3 bg-gradient-to-r from-gray-500 via-white to-gray-500 rounded-full w-2/3 mx-auto shadow-[0_0_30px_rgba(255,255,255,0.3)]" />
+        <p className="text-xs text-gray-400 tracking-[0.3em]">SCREEN</p>
       </div>
 
-      {/* ❗ ERROR TOAST */}
+      {/* ❗ ERROR */}
       {error && (
         <div className="text-center text-red-400 text-sm animate-pulse">
           {error}
         </div>
       )}
 
-      {/* 🪑 SEATS */}
-      <div className="space-y-4">
-        {rows.map((row) => (
-          <div key={row} className="flex justify-center gap-3 items-center">
+      {/* 💺 SEATS */}
+      <div className="perspective-[1200px]">
+        <div className="transform rotateX-6 space-y-4">
 
-            {/* ROW LABEL */}
-            <span className="w-4 text-xs text-gray-400">{row}</span>
+          {rows.map((row) => (
+            <div key={row} className="flex justify-center gap-3 items-center">
 
-            {Array.from({ length: cols }).map((_, i) => {
-              const seat = `${row}${i + 1}`;
-              const isSelected = selected.includes(seat);
-              const isBooked = bookedSeats.includes(seat);
+              {/* ROW LABEL */}
+              <span className="w-4 text-xs text-gray-400">{row}</span>
 
-              const price = getPrice(row);
+              {Array.from({ length: cols }).map((_, i) => {
+                const seat = `${row}${i + 1}`;
+                const isSelected = selected.includes(seat);
+                const isBooked = bookedSeats.includes(seat);
+                const price = getPrice(row);
 
-              return (
-                <div key={seat} className="flex items-center">
+                return (
+                  <div key={seat} className="flex items-center">
 
-                  {/* AISLE GAP */}
-                  {i === 4 && <div className="w-6" />}
+                    {/* AISLE GAP */}
+                    {i === 4 && <div className="w-6" />}
 
-                  <button
-                    onClick={() => toggleSeat(seat)}
-                    disabled={isBooked}
-                    className={`
-                      w-9 h-9 rounded-md text-[10px] font-medium
-                      transition-all duration-200
+                    <button
+                      onClick={() => toggleSeat(seat)}
+                      disabled={isBooked}
+                      className={`
+                        w-9 h-9 rounded-md text-[10px] font-medium
+                        transition-all duration-200
 
-                      ${isBooked && "bg-gray-800 text-gray-500 cursor-not-allowed"}
+                        ${isBooked && "bg-gray-800 text-gray-500 cursor-not-allowed"}
 
-                      ${
-                        !isBooked && !isSelected &&
-                        (price === 150
-                          ? "bg-gray-700 hover:bg-gray-600"
-                          : price === 250
-                          ? "bg-blue-900 hover:bg-blue-700"
-                          : "bg-purple-900 hover:bg-purple-700")
-                      }
+                        ${
+                          !isBooked && !isSelected &&
+                          (price === 150
+                            ? "bg-gray-700 hover:bg-gray-600 hover:scale-110 hover:shadow-md"
+                            : price === 250
+                            ? "bg-blue-900 hover:bg-blue-700 hover:scale-110 hover:shadow-md"
+                            : "bg-purple-900 hover:bg-purple-700 hover:scale-110 hover:shadow-md")
+                        }
 
-                      ${isSelected && "bg-green-500 scale-110 shadow-lg"}
-                    `}
-                  >
-                    {seat}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        ))}
+                        ${
+                          isSelected &&
+                          "bg-green-500 scale-110 shadow-[0_0_20px_rgba(34,197,94,0.8)]"
+                        }
+                      `}
+                    >
+                      {seat}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+
+        </div>
       </div>
 
       {/* 🎨 LEGEND */}
@@ -130,7 +136,7 @@ export default function SeatGrid({ movie, show }: any) {
       </div>
 
       {/* 💳 STICKY FOOTER */}
-      <div className="fixed bottom-0 left-0 w-full bg-black/95 border-t border-white/10 px-6 py-4 flex items-center justify-between z-50">
+      <div className="fixed bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/95 to-transparent border-t border-white/10 px-6 py-4 flex items-center justify-between z-50 backdrop-blur-xl">
 
         <div>
           <p className="text-sm font-semibold">
@@ -144,11 +150,14 @@ export default function SeatGrid({ movie, show }: any) {
         <button
           disabled={selected.length === 0}
           onClick={handleCheckout}
-          className={`px-6 py-2 rounded font-semibold transition ${
-            selected.length === 0
-              ? "bg-gray-600 cursor-not-allowed"
-              : "bg-green-600 hover:bg-green-500"
-          }`}
+          className={`
+            px-8 py-3 rounded-lg font-semibold transition-all duration-300
+            ${
+              selected.length === 0
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-400 hover:scale-105 shadow-[0_0_20px_rgba(34,197,94,0.6)]"
+            }
+          `}
         >
           Pay ₹{total}
         </button>
@@ -157,7 +166,7 @@ export default function SeatGrid({ movie, show }: any) {
   );
 }
 
-// 🎨 Legend Component
+// 🎨 LEGEND
 function Legend({ color, label }: any) {
   return (
     <div className="flex items-center gap-2">

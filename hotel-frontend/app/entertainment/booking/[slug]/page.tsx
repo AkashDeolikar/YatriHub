@@ -20,7 +20,6 @@ export default function BookingPage() {
   const router = useRouter();
 
   const safeSlug = Array.isArray(slug) ? slug[0] : slug;
-
   const movie = movies.find((m) => m.slug === safeSlug);
 
   const [selectedShow, setSelectedShow] = useState<Show | null>(null);
@@ -33,18 +32,15 @@ export default function BookingPage() {
 
   const total = seats.length * (movie?.price || 0);
 
-  // 🎯 Delay video load (Netflix feel)
   useEffect(() => {
     const timer = setTimeout(() => setPlayVideo(true), 800);
     return () => clearTimeout(timer);
   }, []);
 
-  // 🎯 Reset seats when show changes
   useEffect(() => {
     clearSeats();
   }, [selectedShow]);
 
-  // 🎯 Auto scroll to seats
   useEffect(() => {
     if (selectedShow && seatRef.current) {
       seatRef.current.scrollIntoView({ behavior: "smooth" });
@@ -55,28 +51,42 @@ export default function BookingPage() {
     return <div className="text-white p-10">Movie not found</div>;
   }
 
-  // 🎬 Normalize trailer type
   const isYouTube = movie.trailer?.includes("youtube");
   const isVideo = movie.trailer?.endsWith(".mp4");
 
   const availableTheatres = theatres
-    .map((t) => ({
+  .map((t) => {
+    // 🔥 flatten all shows from all screens
+    const allShows = t.screens.flatMap((screen) =>
+      screen.shows.map((s) => ({
+        ...s,
+        theatre: t.name,
+        screen: screen.screenName,
+      }))
+    );
+
+    // 🎯 filter by movie
+    const filteredShows = allShows.filter(
+      (s) => s.movieSlug === movie.slug
+    );
+
+    return {
       ...t,
-      shows: t.shows.filter((s) => s.movieSlug === movie.slug),
-    }))
-    .filter((t) => t.shows.length > 0);
+      shows: filteredShows,
+    };
+  })
+  .filter((t) => t.shows.length > 0);
 
   return (
     <div className="text-white space-y-10 pb-32">
 
       {/* 🎬 HERO */}
-      <div className="relative h-[45vh] rounded-xl overflow-hidden">
+      <div className="relative h-[50vh] rounded-2xl overflow-hidden">
 
-        {/* 🎥 VIDEO */}
         {playVideo && isYouTube ? (
           <iframe
             src={movie.trailer}
-            className="absolute w-full h-full object-cover scale-150 pointer-events-none opacity-90"
+            className="absolute w-full h-full object-cover scale-150 opacity-80"
             allow="autoplay; encrypted-media"
           />
         ) : playVideo && isVideo ? (
@@ -94,17 +104,17 @@ export default function BookingPage() {
             alt={movie.title}
             fill
             priority
-            className="object-cover scale-105 animate-zoom"
+            className="object-cover scale-110"
           />
         )}
 
-        {/* 🎨 OVERLAYS */}
-        <div className="absolute inset-0 bg-black/70" />
+        {/* 🎨 OVERLAY */}
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
         {/* 🎬 CONTENT */}
-        <div className="absolute bottom-6 left-6 z-10 space-y-2">
-          <h1 className="text-3xl md:text-5xl font-bold">
+        <div className="absolute bottom-6 left-6 space-y-2 z-10">
+          <h1 className="text-4xl md:text-6xl font-extrabold">
             {movie.title}
           </h1>
 
@@ -118,20 +128,44 @@ export default function BookingPage() {
         </div>
       </div>
 
-      {/* 🎯 PROGRESS FLOW */}
-      <div className="flex items-center gap-4 text-sm">
-        <span className="text-white font-semibold">1. Showtime</span>
-        <span className="text-gray-500">→</span>
-        <span className={selectedShow ? "text-white font-semibold" : "text-gray-500"}>
-          2. Seats
-        </span>
-        <span className="text-gray-500">→</span>
-        <span className="text-gray-500">3. Payment</span>
+      {/* 🎯 PROGRESS STEPS */}
+      <div className="flex items-center justify-center gap-6 text-xs md:text-sm">
+
+        {[
+          { step: 1, label: "Showtime", active: true },
+          { step: 2, label: "Seats", active: !!selectedShow },
+          { step: 3, label: "Payment", active: false },
+        ].map((item, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <div
+              className={`w-6 h-6 flex items-center justify-center rounded-full text-xs
+              ${
+                item.active
+                  ? "bg-red-600 text-white"
+                  : "bg-gray-700 text-gray-400"
+              }`}
+            >
+              {item.step}
+            </div>
+            <span
+              className={
+                item.active ? "text-white font-semibold" : "text-gray-500"
+              }
+            >
+              {item.label}
+            </span>
+
+            {i < 2 && <span className="text-gray-600">—</span>}
+          </div>
+        ))}
+
       </div>
 
       {/* 🎟 SHOWTIME */}
-      <div className="bg-white/5 backdrop-blur-lg p-6 rounded-xl border border-white/10">
-        <h2 className="font-semibold mb-4">Choose Showtime</h2>
+      <div className="bg-white/5 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-lg">
+        <h2 className="font-semibold mb-4 text-lg">
+          Choose Showtime
+        </h2>
 
         {availableTheatres.length === 0 ? (
           <p className="text-gray-400 text-sm">
@@ -149,22 +183,11 @@ export default function BookingPage() {
       {selectedShow && (
         <div
           ref={seatRef}
-          className="bg-white/5 backdrop-blur-lg p-6 rounded-xl border border-white/10 space-y-6"
+          className="bg-white/5 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-lg space-y-6"
         >
           <h2 className="font-semibold text-lg">
             {selectedShow.theatre} • {selectedShow.time}
           </h2>
-
-          {/* SCREEN */}
-          <div className="text-center text-xs text-gray-400">SCREEN</div>
-          <div className="h-2 bg-gradient-to-r from-gray-500 to-white rounded-full shadow-inner" />
-
-          {/* LEGEND */}
-          <div className="flex justify-center gap-6 text-xs text-gray-400 mt-3">
-            <span>🟩 Available</span>
-            <span>🟥 Selected</span>
-            <span>⬛ Booked</span>
-          </div>
 
           <SeatGrid show={selectedShow} movie={movie} />
         </div>
@@ -172,7 +195,7 @@ export default function BookingPage() {
 
       {/* 💳 PAYMENT BAR */}
       {selectedShow && (
-        <div className="fixed bottom-0 left-0 w-full bg-black/95 border-t border-white/10 px-6 py-4 flex items-center justify-between z-50 backdrop-blur-md">
+        <div className="fixed bottom-0 left-0 w-full bg-black/90 backdrop-blur-xl border-t border-white/10 px-6 py-4 flex items-center justify-between z-50">
 
           {/* INFO */}
           <div>
@@ -188,17 +211,20 @@ export default function BookingPage() {
           <button
             disabled={seats.length === 0}
             onClick={() =>
-              router.push(`/entertainment/checkout/${movie.slug}`)
+              router.push(
+                `/entertainment/checkout?movie=${movie.title}&theatre=${selectedShow.theatre}&time=${selectedShow.time}&seats=${JSON.stringify(seats)}`
+              )
             }
-            className={`px-6 py-2 rounded font-semibold transition-all duration-300 ${
-              seats.length === 0
-                ? "bg-gray-600 cursor-not-allowed"
-                : "bg-red-600 hover:bg-red-500 hover:scale-105"
-            }`}
+            className={`
+              px-8 py-3 rounded-lg font-semibold transition-all duration-300
+              ${
+                seats.length === 0
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-red-600 hover:bg-red-500 hover:scale-105 shadow-[0_0_20px_rgba(255,0,0,0.6)]"
+              }
+            `}
           >
-            {seats.length === 0
-              ? "Select Seats"
-              : `Pay ₹${total}`}
+            {seats.length === 0 ? "Select Seats" : `Pay ₹${total}`}
           </button>
         </div>
       )}

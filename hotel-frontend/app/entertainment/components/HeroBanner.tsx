@@ -16,7 +16,7 @@ export default function HeroBanner({ movies }: any) {
   const movie = movies[index];
   const prevMovie = movies[prevIndex];
 
-  // 🎬 SMOOTH AUTO SLIDE (Netflix style)
+  // 🎬 AUTO SLIDE
   useEffect(() => {
     if (paused) return;
 
@@ -38,59 +38,61 @@ export default function HeroBanner({ movies }: any) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* 🎥 PREVIOUS (FADE OUT) */}
+      {/* 🎥 PREVIOUS */}
       {prevMovie && (
-        <div className="absolute inset-0 transition-opacity duration-1000 opacity-0">
+        <div className="absolute inset-0 transition-opacity duration-1000 opacity-100">
           {prevMovie.video ? (
             <video
               src={prevMovie.video}
               autoPlay
               muted
               loop
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover scale-105"
             />
           ) : (
             <Image
               src={prevMovie.image}
               alt=""
               fill
-              className="object-cover"
+              className="object-cover scale-105"
             />
           )}
         </div>
       )}
 
-      {/* 🎥 CURRENT (FADE IN) */}
+      {/* 🎥 CURRENT */}
       <div className="absolute inset-0 transition-opacity duration-1000 opacity-100">
         {movie.video ? (
           <video
+            key={movie.video}
             src={movie.video}
             autoPlay
             muted
             loop
             playsInline
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover scale-110 animate-zoomSlow"
           />
         ) : (
           <Image
+            key={movie.image}
             src={movie.image}
             alt={movie.title}
             fill
             priority
-            className="object-cover scale-105 animate-zoom"
+            className="object-cover scale-110 animate-zoomSlow"
           />
         )}
       </div>
 
-      {/* 🌑 OVERLAYS */}
-      <div className="absolute inset-0 bg-black/60" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
+      {/* 🌑 OVERLAYS (refined) */}
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
 
       {/* 🎬 CONTENT */}
-      <div className="absolute bottom-24 left-6 md:left-14 max-w-2xl space-y-5 z-10">
+      <div className="absolute bottom-24 left-6 md:left-16 max-w-xl space-y-5 z-10 animate-fadeUp">
 
-        <h1 className="text-4xl md:text-6xl font-extrabold drop-shadow-lg">
+        <h1 className="text-4xl md:text-6xl font-extrabold leading-tight drop-shadow-xl">
           {movie.title}
         </h1>
 
@@ -100,19 +102,21 @@ export default function HeroBanner({ movies }: any) {
           </span>
           <span>• {movie.year || "2026"}</span>
           <span>• {movie.duration || "2h 10m"}</span>
-          <span className="border px-1 text-xs">HD</span>
+          <span className="border border-white/30 px-1 text-xs">HD</span>
         </div>
 
-        <p className="text-gray-300 line-clamp-3">
+        <p className="text-gray-300 line-clamp-3 text-sm leading-relaxed">
           {movie.description}
         </p>
 
-        <div className="flex gap-4">
+        {/* 🎯 ACTIONS */}
+        <div className="flex gap-4 pt-2">
+
           <button
             onClick={() =>
               router.push(`/entertainment/booking/${movie.slug}`)
             }
-            className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded font-semibold hover:bg-gray-200"
+            className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded font-semibold hover:bg-gray-200 transition"
           >
             <FaPlay />
             Play
@@ -122,11 +126,12 @@ export default function HeroBanner({ movies }: any) {
             onClick={() =>
               router.push(`/entertainment/movie/${movie.slug}`)
             }
-            className="flex items-center gap-2 bg-gray-700/70 px-6 py-2 rounded font-semibold hover:bg-gray-600"
+            className="flex items-center gap-2 bg-white/20 backdrop-blur px-6 py-2 rounded font-semibold hover:bg-white/30 transition"
           >
             <FaInfoCircle />
             More Info
           </button>
+
         </div>
       </div>
 
@@ -142,7 +147,7 @@ export default function HeroBanner({ movies }: any) {
             className={`transition-all rounded-full ${
               i === index
                 ? "bg-white w-6 h-2"
-                : "bg-gray-500 w-2 h-2"
+                : "bg-gray-500/60 w-2 h-2 hover:bg-gray-300"
             }`}
           />
         ))}
