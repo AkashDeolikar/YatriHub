@@ -1,44 +1,43 @@
-"use client"
+"use client";
 
-interface Props {
-  price: number
+import { motion } from "framer-motion";
+
+interface FareProps {
+  price: number;
+  count: number;
 }
 
-export default function FareBreakdown({ price }: Props) {
-
-  const taxes = 450
-  const fee = 200
-  const total = price + taxes + fee
+export function FareBreakdown({ price, count }: FareProps) {
+  const taxes = 450;
+  const fee = 200;
+  const subtotal = price * count;
+  const total = subtotal + taxes + fee;
 
   return (
-
-    <div className="bg-[#121826] p-6 rounded-xl">
-
-      <h3 className="text-lg mb-4">Fare Breakdown</h3>
-
-      <div className="flex justify-between">
-        <p>Base Fare</p>
-        <p>₹{price}</p>
+    <div className="space-y-6">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="h-[1px] w-8 bg-teal-500/50" />
+        <h3 className="text-[10px] font-black tracking-[0.4em] text-white uppercase">Ledger Manifest</h3>
       </div>
 
-      <div className="flex justify-between">
-        <p>Taxes</p>
-        <p>₹{taxes}</p>
+      <div className="space-y-4">
+        <div className="flex justify-between items-end group">
+          <span className="text-[9px] font-bold text-zinc-500 tracking-widest uppercase">Base Transit (x{count})</span>
+          <span className="text-xs font-mono text-zinc-300">₹{subtotal.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between items-end">
+          <span className="text-[9px] font-bold text-zinc-500 tracking-widest uppercase">Regulatory Surcharges</span>
+          <span className="text-xs font-mono text-zinc-300">₹{taxes.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between items-end pb-4 border-b border-zinc-900">
+          <span className="text-[9px] font-bold text-zinc-500 tracking-widest uppercase">Convenience Protocol</span>
+          <span className="text-xs font-mono text-zinc-300">₹{fee.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between items-center pt-2">
+          <span className="text-[10px] font-black text-teal-500 tracking-[0.3em] uppercase">Total Liability</span>
+          <span className="text-2xl font-light text-white tracking-tighter">₹{total.toLocaleString()}</span>
+        </div>
       </div>
-
-      <div className="flex justify-between">
-        <p>Convenience Fee</p>
-        <p>₹{fee}</p>
-      </div>
-
-      <hr className="my-4"/>
-
-      <div className="flex justify-between text-lg font-semibold">
-        <p>Total</p>
-        <p>₹{total}</p>
-      </div>
-
     </div>
-
-  )
+  );
 }

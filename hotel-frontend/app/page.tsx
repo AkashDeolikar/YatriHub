@@ -7,6 +7,8 @@ import {
   FaTrain, FaPizzaSlice, FaCocktail, FaIceCream, FaArrowRight,
   FaCrown, FaBed, FaHotel, FaKhanda
 } from "react-icons/fa";
+import { useState } from "react";
+const TABS = ["Hotels", "Flights", "Cabs", "Food"];
 import Navbar from "./navbar";
 
 function DiscoveryServiceCard({ number, name, href, desc }: any) {
@@ -44,6 +46,15 @@ function DiscoveryServiceCard({ number, name, href, desc }: any) {
 }
 
 export default function Home() {
+  // Inside your export default function Home() { ... }
+  const [activeTab, setActiveTab] = useState("Hotels");
+  const chartData = [40, 70, 45, 90, 65, 80, 30, 50, 40, 60, 85, 45, 75, 55, 95];
+  const words = [
+    { text: "Travel", color: "from-gray-100 to-gray-300", indent: 0 },
+    { text: "Stay", color: "from-indigo-400 via-teal-400 to-emerald-400", indent: 200 },
+    { text: "Move", color: "from-fuchsia-400 via-pink-400 to-indigo-300", indent: 350 },
+    { text: "Experience", color: "from-violet-400 via-pink-500 to-fuchsia-300", indent: 500 },
+  ];
   return (
     <div className="min-h-screen bg-[#000] text-white selection:bg-indigo-500/30">
       {/* GLOW BACKGROUND */}
@@ -72,74 +83,162 @@ export default function Home() {
           className="relative max-w-7xl mx-auto"
         >
           {/* ✨ Tagline */}
-          <span className="px-5 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-gray-300 text-xs font-semibold tracking-wide mb-10 inline-block">
-            Next-Gen Hospitality · v3.0
+          <span className="px-4 py-1.5 rounded-full border border-teal-500/20 bg-teal-500/5 backdrop-blur-md text-teal-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-8 inline-block">
+            ✨ Now Live: Summer Collection 2026
           </span>
 
           {/* 🌟 Hero Heading */}
-          <h1 className="text-6xl md:text-8xl font-extrabold leading-[0.95] mb-8 uppercase relative">
-            <span className="block text-gray-200">Travel.</span>
+          <div className="relative py-20 px-10">
+            {/* Screen Reader Only Title for SEO/Accessibility */}
+            <h1 className="sr-only">Travel. Stay. Move. Experience.</h1>
 
-            <motion.span
-              className="block bg-gradient-to-r from-indigo-400 via-teal-400 to-purple-400 bg-clip-text text-transparent"
-              animate={{ y: [-4, 4, -4] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            <div className="relative z-10 flex flex-col gap-4 md:gap-2" aria-hidden="true">
+              {words.map((word, i) => (
+                <motion.div
+                  key={`${word.text}-${i}`}
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ paddingLeft: `${word.indent}px` }}
+                  className="relative flex items-center group w-fit"
+                >
+                  {/* Animated Step Indicator Dot */}
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.15 + 0.4 }}
+                    className="absolute -left-8 w-3 h-3 rounded-full border border-white/30 bg-white/10 group-hover:bg-teal-400 group-hover:border-teal-400 transition-colors hidden md:block"
+                  />
+
+                  <span className={`
+                      text-5xl md:text-8xl font-black tracking-tighter uppercase leading-none
+                      bg-gradient-to-r ${word.color} bg-clip-text text-transparent
+                      hover:brightness-125 transition-all duration-300 cursor-default select-none
+                    `}>
+                    {word.text}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* The Animated "Path" Line */}
+            <svg
+              className="absolute top-0 left-0 w-full h-full pointer-events-none hidden md:block"
+              viewBox="0 0 400 400"
+              preserveAspectRatio="none"
             >
-              Stay.
-            </motion.span>
+              <motion.path
+                /**
+                 * Petal Logic:
+                 * M 100 350 : Start at the bottom (stem)
+                 * Q 0 200, 100 50 : Curve out to the left and meet at the tip
+                 * Q 200 200, 100 350 : Curve out to the right and return to the base
+                 */
+                d="M 100 350 Q 0 200, 100 50 Q 200 200, 100 350"
+                stroke="url(#petal-gradient)"
+                strokeWidth="1.5"
+                fill="url(#petal-fill)"
+                initial={{ pathLength: 0, opacity: 0, scale: 0.8 }}
+                whileInView={{ pathLength: 1, opacity: 0.6, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 2.5,
+                  delay: 0.5,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
+                style={{
+                  filter: "drop-shadow(0px 0px 10px rgba(45, 212, 191, 0.2))",
+                  transformOrigin: "bottom center"
+                }}
+              />
+              <motion.path
+                d="M 150 500 Q 50 200, 400 50 Q 200 400, 400 350"
+                stroke="url(#petal-gradient)"
+                strokeWidth="1"
+                fill="url(#petal-fill)"
+                initial={{ pathLength: 0, opacity: 0, scale: 0.8 }}
+                whileInView={{ pathLength: 1, opacity: 0.6, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 3.5,
+                  delay: 1.5,
+                  ease: [0.16, 1, 0.7, 1]
+                }}
+                style={{
+                  filter: "drop-shadow(0px 0px 10px rgba(45, 212, 191, 0.2))",
+                  transformOrigin: "bottom center"
+                }}
+              />
+              <defs>
+                {/* Outline Gradient */}
+                <linearGradient id="petal-gradient" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%" stopColor="#2dd4bf" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#2dd4bf" />
+                  <stop offset="100%" stopColor="white" />
+                </linearGradient>
 
-            <motion.span
-              className="block bg-gradient-to-r from-fuchsia-400 via-pink-400 to-indigo-300 bg-clip-text text-transparent"
-              animate={{ y: [4, -4, 4] }}
-              transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              Move.
-            </motion.span>
-
-            <motion.span
-              className="block bg-gradient-to-r from-violet-400 via-pink-500 to-fuchsia-300 bg-clip-text text-transparent"
-              animate={{ y: [-2, 2, -2] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              Experience.
-            </motion.span>
-          </h1>
-
-          {/* Subtext */}
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-12 font-medium">
-            One unified platform for booking stays, flights, cabs, food, and experiences—powered by <span className="text-indigo-300 font-semibold">real-time intelligence</span> and <span className="text-fuchsia-300 font-semibold">secure payments</span>.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col md:flex-row justify-center gap-6">
-            <Link href="/rooms" className="px-12 py-4 bg-gradient-to-r from-indigo-500 via-teal-400 to-purple-500 text-white font-bold uppercase tracking-widest rounded-full shadow-xl hover:scale-105 hover:brightness-110 transition-all">
-              Start Booking
-            </Link>
-            <Link href="/admin" className="px-12 py-4 bg-black/40 border border-white/10 font-bold uppercase tracking-widest rounded-full text-white hover:bg-black/60 hover:border-indigo-400 transition-all">
-              Launch Console
-            </Link>
+                {/* Subtle Inner Glow Fill */}
+                <radialGradient id="petal-fill" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#2dd4bf" stopOpacity="0.1" />
+                  <stop offset="100%" stopColor="#2dd4bf" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+            </svg>
           </div>
 
-          {/* Search Tabs + Bar */}
-          <div className="mt-16 max-w-4xl mx-auto">
-            {/* Tabs */}
-            <div className="flex justify-center gap-6 mb-4 text-xs text-gray-400 font-semibold">
-              <button className="text-indigo-400 hover:underline">Hotels</button>
-              <button className="hover:text-indigo-300 transition-colors">Flights</button>
-              <button className="hover:text-indigo-300 transition-colors">Cabs</button>
-              <button className="hover:text-indigo-300 transition-colors">Food</button>
+          <div className="mt-16 max-w-4xl mx-auto w-full px-4">
+            {/* 🌟 Animated Tabs */}
+            <div className="flex justify-center gap-8 mb-6">
+              {TABS.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`relative pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === tab ? "text-indigo-400" : "text-gray-500 hover:text-gray-300"
+                    }`}
+                >
+                  {tab}
+                  {activeTab === tab && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-teal-400"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </button>
+              ))}
             </div>
 
-            {/* Search Input */}
-            <div className="bg-white/5 border border-white/10 rounded-full p-2 flex gap-2 backdrop-blur shadow-lg">
+            {/* 🌟 Search Input Group */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="group bg-white/5 border border-white/10 rounded-full p-2 flex items-center gap-2 backdrop-blur-xl shadow-2xl focus-within:border-indigo-500/50 focus-within:bg-white/[0.08] transition-all duration-300"
+            >
+              <div className="pl-4 text-gray-400 group-focus-within:text-indigo-400 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+
               <input
-                placeholder="Where are you going?"
-                className="flex-1 bg-transparent px-4 py-2 text-sm text-white outline-none placeholder:text-gray-400"
+                type="text"
+                placeholder={`Search for ${activeTab.toLowerCase()}...`}
+                className="flex-1 bg-transparent py-3 text-base text-white outline-none placeholder:text-gray-500 font-medium"
               />
-              <button className="bg-gradient-to-r from-indigo-500 via-teal-400 to-purple-500 px-6 py-2 rounded-full text-sm font-bold text-white hover:brightness-110 transition-all">
+
+              <button className="bg-gradient-to-r from-indigo-600 via-teal-500 to-purple-600 px-8 py-3 rounded-full text-sm font-black uppercase tracking-tighter text-white hover:scale-[1.02] active:scale-95 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all duration-200">
                 Search
               </button>
-            </div>
+            </motion.div>
+
+            {/* Quick Suggestions (Optional Production Touch) */}
+            <p className="mt-4 text-center text-[10px] text-gray-500 font-medium uppercase tracking-widest opacity-60">
+              Popular: <span className="text-gray-300 cursor-pointer hover:text-indigo-400">Manali</span>,
+              <span className="text-gray-300 ml-2 cursor-pointer hover:text-indigo-400">Goa</span>,
+              <span className="text-gray-300 ml-2 cursor-pointer hover:text-indigo-400">Leh</span>
+            </p>
           </div>
         </motion.div>
       </section>
@@ -147,97 +246,133 @@ export default function Home() {
       {/* BENTO GRID FEATURES */}
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <div className="grid md:grid-cols-4 md:grid-rows-2 gap-4 h-auto md:h-[650px]">
-          <BentoBox className="md:col-span-2 md:row-span-2 group relative overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-3xl border border-white/10 bg-[#0a0a0a] p-8 transition-all duration-500 hover:border-indigo-500/30"
+          >
+            {/* 1. Spotlight Effect - Follows hover (Static version here, can be made dynamic with JS) */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[radial-gradient(circle_at_var(--x,_50%)_var(--y,_50%),_rgba(99,102,241,0.15)_0%,_transparent_70%)] pointer-events-none" />
 
-            {/* Subtle Hover Glow */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
+            {/* 2. Animated Border Beam (Top Edge) */}
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
 
-            {/* Icon */}
-            <FaShieldAlt className="text-4xl text-indigo-400 mb-6 transition-transform duration-300 group-hover:scale-110" />
+            {/* Content Wrapper */}
+            <div className="relative z-10 h-full flex flex-col">
 
-            {/* Title */}
-            <h3 className="text-2xl md:text-3xl font-semibold mb-3 tracking-tight text-white">
-              Smart Booking Engine
-            </h3>
-
-            {/* Description */}
-            <p className="text-gray-400 text-sm leading-relaxed max-w-md">
-              Advanced locking at the database level prevents double bookings across
-              rooms, flights, and cabs — ensuring seamless, conflict-free transactions
-              in real time.
-            </p>
-
-            {/* Stats */}
-            <div className="mt-10 pt-6 border-t border-white/10 grid grid-cols-3 gap-6">
-
-              <div>
-                <div className="text-2xl font-semibold text-white">500+</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wide mt-1">
-                  Hotels
-                </div>
+              {/* Icon with Glowing Backdrop */}
+              <div className="relative w-fit mb-6">
+                <div className="absolute inset-0 bg-indigo-500/20 blur-xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-500" />
+                <FaShieldAlt className="relative text-4xl text-indigo-400 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3" />
               </div>
 
-              <div>
-                <div className="text-2xl font-semibold text-white">50+</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wide mt-1">
-                  Cities
-                </div>
+              {/* Text Section */}
+              <div className="space-y-3">
+                <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-white leading-tight">
+                  Smart Booking <span className="text-indigo-400/80">Engine</span>
+                </h3>
+                <p className="text-gray-400 text-base leading-relaxed max-w-sm font-medium">
+                  Advanced locking at the database level prevents double bookings—ensuring
+                  <span className="text-white"> conflict-free transactions</span> in real time.
+                </p>
               </div>
 
-              <div>
-                <div className="text-2xl font-semibold text-white">24/7</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wide mt-1">
-                  Support
+              {/* 3. Interactive Stats Grid */}
+              <div className="mt-auto pt-8">
+                <div className="grid grid-cols-3 gap-4 border-t border-white/5 pt-8">
+                  {[
+                    { label: "Hotels", val: "500+" },
+                    { label: "Cities", val: "50+" },
+                    { label: "Support", val: "24/7" },
+                  ].map((stat, i) => (
+                    <div key={i} className="group/stat">
+                      <div className="text-2xl md:text-3xl font-bold text-white tabular-nums group-hover/stat:text-indigo-400 transition-colors">
+                        {stat.val}
+                      </div>
+                      <div className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold mt-1">
+                        {stat.label}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-
             </div>
-          </BentoBox>
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+          </motion.div>
 
 
-          <BentoBox className="group relative md:col-span-2 overflow-hidden rounded-xl border border-white/10 bg-[#1c1c1c]/50 backdrop-blur-md transition-all hover:border-indigo-500/50">
-            {/* Subtitle/Status Header */}
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-indigo-500/10 rounded-lg">
-                  <FaChartLine className="text-lg text-indigo-400" />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="group relative md:col-span-2 overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d0d] p-6 transition-all duration-500 hover:border-indigo-500/40 hover:shadow-[0_0_30px_rgba(99,102,241,0.1)]"
+          >
+            {/* 1. The Header: Improved Hierarchy */}
+            <div className="flex justify-between items-start mb-8 relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-indigo-500/10 rounded-xl border border-indigo-500/20 group-hover:bg-indigo-500/20 transition-colors">
+                  <FaChartLine className="text-xl text-indigo-400" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold tracking-tight text-white/90">LIVE INTELLIGENCE</h3>
-                  <p className="text-[11px] text-gray-500 leading-none">Real-time streams</p>
+                  <h3 className="text-xs font-black uppercase tracking-[0.15em] text-white/50">
+                    Live Intelligence
+                  </h3>
+                  <p className="text-sm font-semibold text-white">Market Activity</p>
                 </div>
               </div>
 
-              {/* Microsoft-style Status Badge */}
-              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20">
-                <span className="relative flex h-1.5 w-1.5">
+              {/* Improved Live Badge */}
+              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-green-500/5 border border-green-500/20 backdrop-blur-sm">
+                <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>
-                <span className="text-[10px] font-medium text-green-400 uppercase tracking-wider">Live</span>
+                <span className="text-[10px] font-black text-green-400 uppercase tracking-tighter">
+                  Live
+                </span>
               </div>
             </div>
 
-            {/* Main Content Area */}
-            <div className="mt-4">
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-white">$42.4k</span>
-                <span className="text-[10px] text-green-400 font-medium">+12%</span>
+            {/* 2. Primary Metric: Visual Punch */}
+            <div className="relative z-10">
+              <div className="flex items-end gap-2 mb-6">
+                <motion.span
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="text-4xl font-bold tracking-tighter text-white tabular-nums"
+                >
+                  $42,408
+                </motion.span>
+                <div className="flex items-center gap-1 text-green-400 font-bold text-sm pb-1">
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                    <path d="M7 14l5-5 5 5z" />
+                  </svg>
+                  <span>12.5%</span>
+                </div>
               </div>
-              {/* Data Visualization Grid */}
-              <div className="mt-6 flex items-end gap-[3px] h-12">
-                {[40, 70, 45, 90, 65, 80, 30, 50, 40, 60, 85, 45].map((h, i) => (
-                  <div
+
+              {/* 3. Data Visualization: Animated Bars */}
+              <div className="flex items-end gap-1.5 h-16 group/chart">
+                {chartData.map((h, i) => (
+                  <motion.div
                     key={i}
-                    style={{ height: `${h}%` }}
-                    className="flex-1 bg-indigo-500/30 rounded-t-[1px] transition-all duration-500 hover:bg-indigo-400"
+                    initial={{ height: 0 }}
+                    whileInView={{ height: `${h}%` }}
+                    transition={{
+                      duration: 0.8,
+                      delay: i * 0.05,
+                      ease: [0.33, 1, 0.68, 1]
+                    }}
+                    className="flex-1 bg-gradient-to-t from-indigo-600/20 via-indigo-500/40 to-indigo-400 rounded-t-sm transition-all duration-300 hover:to-white hover:shadow-[0_0_15px_rgba(129,140,248,0.5)] cursor-crosshair"
                   />
                 ))}
               </div>
             </div>
-            {/* Background Glow Effect */}
-            <div className="absolute -right-8 -bottom-8 h-24 w-24 bg-indigo-600/10 blur-[40px] pointer-events-none" />
-          </BentoBox>
+            <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-indigo-500/20 transition-colors duration-700" />
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none [mask-image:radial-gradient(ellipse_at_center,white,transparent)] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+            <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000" />
+          </motion.div>
 
           {/* INSTANT PAY */}
           <BentoBox className="md:col-span-1 group relative overflow-hidden border border-white/10 bg-[#0a0a0a]/60 backdrop-blur-md hover:border-yellow-500/40 transition-all">
@@ -275,114 +410,96 @@ export default function Home() {
       </section>
 
       {/* PREMIER ROOMS ECOSYSTEM */}
-      <section className="py-24 border-t border-white/5 bg-[#000]">
+      <section className="py-24 border-t border-white/5 bg-black relative overflow-hidden">
+        {/* Background Ambient Light */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+
         <div className="max-w-7xl mx-auto px-6">
-
-          {/* Top Label */}
-          <h2 className="text-center text-xs tracking-[0.35em] text-gray-500 uppercase mb-10">
-            One Platform · Infinite Possibilities
-          </h2>
-
-          {/* Heading Row */}
+          {/* Section Header */}
           <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-16 gap-8">
-
-            <div>
-              <h2 className="text-xs font-semibold tracking-[0.3em] text-indigo-400 uppercase mb-3">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-xs font-black tracking-[0.4em] text-indigo-500 uppercase mb-4">
                 Accommodations
               </h2>
-
-              <h3 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
-                Premier Environments
+              <h3 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
+                Premier <span className="text-white/50">Environments</span>
               </h3>
-            </div>
+            </motion.div>
 
-            {/* CTA */}
             <Link
               href="/rooms"
-              className="group inline-flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition"
+              className="group flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-indigo-400 transition-all"
             >
               Discover all units
-              <FaArrowRight
-                size={12}
-                className="text-indigo-400 transition-transform group-hover:translate-x-1"
-              />
+              <div className="p-2 rounded-full border border-white/10 group-hover:border-indigo-500/50 group-hover:bg-indigo-500/10 transition-all">
+                <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+              </div>
             </Link>
           </div>
 
-          {/* Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {/* The Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6">
 
-            <RoomFeatureCard
-              icon={<FaCrown size={30} />}
-              price="30,000"
-              href="/rooms"
-            />
+            {/* Existing Room Cards */}
+            <RoomFeatureCard icon={<FaCrown size={30} />} price="30,000" href="/rooms" />
+            <RoomStandardCard icon={<FaKhanda />} name="Luxury Suite" href="/rooms" price="20,000" desc="Elevated space with panoramic views." />
+            <RoomStandardCard icon={<FaHotel />} name="Business Class" href="/rooms" price="15,000" desc="Designed for productivity and comfort." />
+            <RoomStandardCard icon={<FaBed />} name="Smart Standard" href="/rooms" price="9,000" desc="Essential comfort with automated service." />
 
-            <RoomStandardCard
-              icon={<FaKhanda />}
-              name="Luxury Suite"
-              href="/rooms"
-              price="20,000"
-              desc="Elevated space with panoramic views."
-            />
+            {/* UPGRADED: Availability Engine (Now spans full height or takes 5th column) */}
+            <motion.div
+              whileHover={{ y: -5 }}
+              className="group relative flex flex-col justify-between p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl overflow-hidden"
+            >
+              {/* Animated Background Mesh */}
+              <div className="absolute -right-10 -top-10 h-32 w-32 bg-indigo-500/10 blur-[50px] group-hover:bg-indigo-500/20 transition-colors" />
 
-            <RoomStandardCard
-              icon={<FaHotel />}
-              name="Business Class"
-              href="/rooms"
-              price="15,000"
-              desc="Designed for productivity and comfort."
-            />
-
-            <RoomStandardCard
-              icon={<FaBed />}
-              name="Smart Standard"
-              href="/rooms"
-              price="9,000"
-              desc="Essential comfort with automated service."
-            />
-
-            {/* Availability Engine (UPGRADED) */}
-            <div className="group relative bg-[#0a0a0a]/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 flex flex-col justify-between min-h-[160px] hover:border-indigo-500/40 transition-all">
-
-              <h4 className="text-[11px] font-medium uppercase tracking-wide text-gray-500 mb-4">
-                Availability Engine
-              </h4>
-
-              <div className="space-y-3">
-
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-400">Total Units</span>
-                  <span className="text-white font-medium">148</span>
+              <div>
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
+                    Live Inventory
+                  </h4>
                 </div>
 
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-400">Sync Status</span>
+                <div className="space-y-5">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-tighter text-gray-500 mb-1">Total Units</p>
+                      <p className="text-2xl font-bold text-white tabular-nums">148</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase tracking-tighter text-gray-500 mb-1">Available</p>
+                      <p className="text-xl font-bold text-indigo-400 tabular-nums">32</p>
+                    </div>
+                  </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse"></span>
-                    <span className="text-green-400 text-xs font-medium">
-                      Operational
-                    </span>
+                  {/* Occupancy Progress */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+                      <span className="text-gray-500">Occupancy</span>
+                      <span className="text-indigo-400">78%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: "78%" }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                        className="h-full bg-gradient-to-r from-indigo-600 to-teal-400"
+                      />
+                    </div>
                   </div>
                 </div>
-
               </div>
 
-              {/* Mini Progress Indicator */}
-              <div className="mt-6">
-                <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full w-[78%] bg-indigo-400"></div>
-                </div>
-                <div className="text-[10px] text-gray-500 mt-1">
-                  Occupancy 78%
-                </div>
-              </div>
-
-              {/* Glow */}
-              <div className="absolute -right-6 -bottom-6 w-16 h-16 bg-indigo-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition" />
-            </div>
-
+              <button className="mt-8 w-full py-3 rounded-xl bg-white/[0.03] border border-white/5 text-[10px] font-black uppercase tracking-widest text-white hover:bg-indigo-500 hover:border-indigo-400 transition-all duration-300">
+                Check Schedule
+              </button>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -390,7 +507,6 @@ export default function Home() {
       {/* TRAVEL SERVICE SELECTOR */}
       <section className="py-24 border-t border-white/5 bg-[#050505] relative overflow-hidden">
 
-        {/* Subtle Top Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -456,156 +572,167 @@ export default function Home() {
       </section>
 
       {/* GOURMET ECOSYSTEM SECTION */}
-      <section className="py-24 border-t border-white/5 bg-[#050505]">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-24 border-t border-white/5 bg-[#050505] relative overflow-hidden group/culinary">
+        {/* Ambient Culinary Glow */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-600/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-fuchsia-600/5 blur-[100px] rounded-full pointer-events-none" />
 
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
-
-            <div>
-              <h2 className="text-xs font-semibold tracking-[0.3em] text-purple-400 uppercase mb-3">
-                Culinary
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-xs font-black tracking-[0.4em] text-purple-400 uppercase mb-4">
+                Culinary Excellence
               </h2>
-
-              <h3 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
-                Gourmet Services
+              <h3 className="text-4xl md:text-5xl font-bold text-white leading-none">
+                Gourmet <span className="text-purple-200/30">Services</span>
               </h3>
-            </div>
+            </motion.div>
 
-            {/* CTA */}
             <Link
               href="/food"
-              className="group inline-flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition"
+              className="group/cta flex items-center gap-4 px-8 py-3.5 rounded-full bg-white/[0.02] border border-white/10 text-xs font-bold uppercase tracking-[0.2em] text-gray-300 hover:text-white hover:border-purple-500/50 hover:bg-purple-500/5 transition-all duration-500"
             >
               Open menu
-              <span className="text-purple-400 transition-transform group-hover:translate-x-1">
-                →
-              </span>
+              <FaArrowRight className="text-purple-400 transition-transform group-hover/cta:translate-x-1.5" size={10} />
             </Link>
           </div>
 
-          {/* Grid */}
+          {/* Grid with Staggered Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { icon: <FaUtensils />, name: "Main Course", cat: "Indian", desc: "Curated fine dining experiences", delay: 0 },
+              { icon: <FaPizzaSlice />, name: "Fast Track", cat: "Pizza", desc: "Quick bites with urban flavors", delay: 0.1 },
+              { icon: <FaCocktail />, name: "Mixology", cat: "Liquor", desc: "Premium cocktails & spirits", delay: 0.2 },
+              { icon: <FaIceCream />, name: "Patisserie", cat: "Desserts", delay: 0.3, desc: "Artisan desserts & sweet finales" },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: item.delay, duration: 0.5 }}
+              >
+                <Link
+                  href={`/food?cat=${item.cat}`}
+                  className="group relative flex flex-col h-full p-8 rounded-[2rem] border border-white/5 bg-gradient-to-b from-white/[0.03] to-transparent hover:from-purple-500/10 hover:border-purple-500/30 transition-all duration-700 overflow-hidden"
+                >
+                  {/* Top "Sparkle" Glow */}
+                  <div className="absolute -top-10 -right-10 w-24 h-24 bg-purple-500/10 blur-2xl group-hover:bg-purple-500/30 transition-colors duration-700" />
 
-            <ServiceCard
-              icon={<FaUtensils />}
-              name="Main Course"
-              href="/food?cat=Indian"
-              desc="Curated fine dining experiences"
-            />
+                  <div className="relative z-10">
+                    {/* Icon Logic: Larger, floating feel */}
+                    <div className="mb-12 inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 text-2xl text-purple-300 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white group-hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-500">
+                      {item.icon}
+                    </div>
 
-            <ServiceCard
-              icon={<FaPizzaSlice />}
-              name="Fast Track"
-              href="/food?cat=Pizza"
-              desc="Quick bites with urban flavors"
-            />
+                    <h4 className="text-lg font-bold text-white mb-2 group-hover:text-purple-200 transition-colors">
+                      {item.name}
+                    </h4>
+                    <p className="text-xs text-gray-500 leading-relaxed font-medium group-hover:text-gray-400 transition-colors">
+                      {item.desc}
+                    </p>
+                  </div>
 
-            <ServiceCard
-              icon={<FaCocktail />}
-              name="Mixology"
-              href="/food?cat=Liquor"
-              desc="Premium cocktails & spirits"
-            />
-
-            <ServiceCard
-              icon={<FaIceCream />}
-              name="Patisserie"
-              href="/food?cat=Desserts"
-              desc="Artisan desserts & sweet finales"
-            />
-
+                  {/* Subtle "Arrow" hint that appears on hover */}
+                  <div className="mt-8 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-purple-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                    Taste Now <FaArrowRight size={8} />
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </div>
-
         </div>
       </section>
 
       {/* DISCOVERY ECOSYSTEM SECTION */}
-      <section className="py-24 border-t border-white/5 bg-[#050505] relative overflow-hidden">
-
-        {/* Background Glow */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[140px] rounded-full -translate-y-1/2 translate-x-1/2 opacity-40" />
+      <section className="py-24 border-t border-white/5 bg-[#050505] relative overflow-hidden group/discovery">
+        {/* 1. Sophisticated Ambient Lighting */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-500/5 blur-[140px] rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-
           {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
-
-            <div>
-              {/* Label */}
-              {[40, 70, 45, 90, 65, 80, 30, 50, 40, 60, 85, 45].map((h, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ height: 0 }}
-                  animate={{ height: `${h}%` }}
-                  transition={{ delay: i * 0.05, duration: 0.5 }}
-                  className="flex-1 bg-indigo-500/30 rounded-t-[1px]"
-                />
-              ))}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
+            <div className="max-w-2xl">
+              {/* Editorial Label */}
               <motion.div
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-3 mb-4"
+                viewport={{ once: true }}
+                className="flex items-center gap-4 mb-6"
               >
-                <span className="h-[1px] w-6 bg-indigo-500/50" />
-                <h2 className="text-xs font-semibold tracking-[0.3em] text-indigo-400 uppercase">
+                <h2 className="text-xs font-black tracking-[0.5em] text-indigo-500 uppercase">
                   Discovery
                 </h2>
+                <div className="h-px w-12 bg-indigo-500/30" />
               </motion.div>
 
-              {/* Title */}
-              <h3 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
-                Curated Experiences
+              {/* Title & Subtext */}
+              <h3 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6">
+                Curated <span className="text-white/40 ">Experiences</span>
               </h3>
-
-              <p className="text-sm text-gray-400 mt-3 max-w-md">
-                Discover wellness, adventure, culinary, and cultural experiences tailored to your journey.
+              <p className="text-gray-500 text-lg leading-relaxed font-medium">
+                Discover wellness, adventure, and cultural rituals
+                <span className="text-gray-300"> tailored precisely to your journey.</span>
               </p>
             </div>
 
-            {/* CTA */}
             <Link
               href="/discovery"
-              className="group inline-flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition"
+              className="group/cta flex items-center gap-4 px-8 py-4 rounded-full bg-white/[0.03] border border-white/10 text-xs uppercase tracking-widest text-gray-300 hover:text-white hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all duration-500"
             >
               View all experiences
-              <span className="text-indigo-400 transition-transform group-hover:translate-x-1">
-                →
-              </span>
+              <FaArrowRight className="text-indigo-400 transition-transform group-hover/cta:translate-x-2" />
             </Link>
           </div>
 
-          {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* 2. Optimized Grid with Staggered Entrance */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-white/5 rounded-3xl overflow-hidden">
+            {[
+              { num: "01", name: "Wellness", desc: "Therapeutic rituals & spa experiences", cat: "Wellness" },
+              { num: "02", name: "Adventures", desc: "Outdoor and high-altitude activities", cat: "Adventure" },
+              { num: "03", name: "Culinary", desc: "Private dining & chef-led sessions", cat: "Culinary" },
+              { num: "04", name: "Local Arts", desc: "Exclusive galleries & cultural access", cat: "Discovery" },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Link
+                  href={`/discovery?cat=${item.cat}`}
+                  className="group relative flex flex-col h-[350px] p-10 bg-[#050505] hover:bg-indigo-500/[0.02] transition-colors duration-700"
+                >
+                  {/* Hover Accent Line */}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left" />
 
-            <DiscoveryServiceCard
-              number="01"
-              name="Wellness"
-              href="/discovery?cat=Wellness"
-              desc="Therapeutic rituals & spa experiences"
-            />
+                  {/* Vertical Numbering */}
+                  <span className="text-5xl font-serif italic text-white/[0.03] group-hover:text-indigo-500/10 transition-colors duration-700 absolute top-8 right-8">
+                    {item.num}
+                  </span>
 
-            <DiscoveryServiceCard
-              number="02"
-              name="Adventures"
-              href="/discovery?cat=Adventure"
-              desc="Outdoor and high-altitude activities"
-            />
+                  <div className="mt-auto relative z-10">
+                    <h4 className="text-2xl font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors">
+                      {item.name}
+                    </h4>
+                    <p className="text-sm text-gray-500 leading-relaxed font-medium group-hover:text-gray-300 transition-colors">
+                      {item.desc}
+                    </p>
 
-            <DiscoveryServiceCard
-              number="03"
-              name="Culinary"
-              href="/discovery?cat=Culinary"
-              desc="Private dining & chef-led sessions"
-            />
-
-            <DiscoveryServiceCard
-              number="04"
-              name="Local Arts"
-              href="/discovery?cat=Discovery"
-              desc="Exclusive galleries & cultural access"
-            />
-
+                    {/* Animated Arrow Reveal */}
+                    <div className="mt-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                      Explore <FaArrowRight size={10} />
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -914,10 +1041,8 @@ function RoomFeatureCard({
     >
       {/* BACKGROUND GLOW */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
-
       {/* CONTENT */}
       <div className="relative z-10">
-
         {/* ICON */}
         <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center mb-6 border border-indigo-500/20">
           <div className="text-indigo-400 text-xl">
@@ -984,10 +1109,8 @@ function RoomStandardCard({
     >
       {/* GLOW */}
       <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-indigo-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition" />
-
       {/* TOP */}
       <div className="flex justify-between items-start mb-6">
-
         {/* ICON */}
         <div className="p-2 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
           <div className="text-indigo-400 text-lg group-hover:scale-110 transition-transform">
@@ -1004,7 +1127,6 @@ function RoomStandardCard({
             ₹{price}
           </p>
         </div>
-
       </div>
 
       {/* CONTENT */}
@@ -1012,7 +1134,6 @@ function RoomStandardCard({
         <h4 className="text-base font-semibold text-white tracking-tight">
           {name}
         </h4>
-
         <p className="text-xs text-gray-400 mt-2 leading-relaxed">
           {desc}
         </p>

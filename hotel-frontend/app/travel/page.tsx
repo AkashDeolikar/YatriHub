@@ -11,6 +11,7 @@ import trainIcon from '../travel/train.svg';
 import flight from '../travel/flight.svg';
 import cab from '../travel/cab.webp';
 import bus from '../travel/bus.webp';
+import Navbar from "../navbar";
 
 export default function TravelPage() {
   const router = useRouter();
@@ -24,23 +25,9 @@ export default function TravelPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-indigo-500/30">
+      {/* NAVBAR */}
+            <Navbar />
       
-      {/* SaaS Navigation Bar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 backdrop-blur-md bg-black/40">
-        <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
-          <Link href="/" className="text-2xl font-bold tracking-tighter">
-            Hotel<span className="text-indigo-500">OS</span>
-          </Link>
-          <div className="hidden md:flex gap-8 text-sm text-gray-400 font-medium">
-            <Link href="#" className="hover:text-white transition-colors">Pricing</Link>
-            <Link href="#" className="hover:text-white transition-colors">Enterprise</Link>
-            <Link href="#" className="hover:text-white transition-colors">Support</Link>
-          </div>
-          <button className="bg-white text-black text-sm font-bold px-5 py-2 rounded-full hover:bg-indigo-500 hover:text-white transition-all">
-            Dashboard
-          </button>
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <div className="relative pt-44 pb-20 px-6 overflow-hidden">
