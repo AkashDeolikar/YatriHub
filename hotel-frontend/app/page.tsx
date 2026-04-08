@@ -56,56 +56,87 @@ export default function Home() {
       <Navbar />
 
       {/* HERO SECTION */}
-      <section className="relative pt-32 pb-20 px-6 text-center">
+      <section className="relative pt-28 pb-24 px-6 text-center overflow-hidden">
+        {/* 🌌 Background Cosmic Layers */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-[-20%] left-[-15%] w-[80%] h-[80%] bg-indigo-600/10 blur-[180px] rounded-full animate-pulse" />
+          <div className="absolute bottom-[-15%] right-[-10%] w-[60%] h-[60%] bg-fuchsia-500/10 blur-[140px] rounded-full" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_#020202_85%)]" />
+          <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        </div>
+
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+          className="relative max-w-7xl mx-auto"
         >
-          <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-gray-300 text-xs font-semibold tracking-wide mb-8 inline-block">
+          {/* ✨ Tagline */}
+          <span className="px-5 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-gray-300 text-xs font-semibold tracking-wide mb-10 inline-block">
             Next-Gen Hospitality · v3.0
           </span>
-          <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight leading-[0.95] mb-8 uppercase">
-            <span className="text-gray-200">Travel.</span> <br />
 
-            <span className="text-indigo-300 inline-block hover:-translate-y-1 transition">
+          {/* 🌟 Hero Heading */}
+          <h1 className="text-6xl md:text-8xl font-extrabold leading-[0.95] mb-8 uppercase relative">
+            <span className="block text-gray-200">Travel.</span>
+
+            <motion.span
+              className="block bg-gradient-to-r from-indigo-400 via-teal-400 to-purple-400 bg-clip-text text-transparent"
+              animate={{ y: [-4, 4, -4] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            >
               Stay.
-            </span>{" "}
-            <span className="text-violet-300 inline-block hover:translate-y-1 transition">
+            </motion.span>
+
+            <motion.span
+              className="block bg-gradient-to-r from-fuchsia-400 via-pink-400 to-indigo-300 bg-clip-text text-transparent"
+              animate={{ y: [4, -4, 4] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+            >
               Move.
-            </span>{" "}
-            <span className="text-fuchsia-300 inline-block hover:-translate-y-1 transition">
+            </motion.span>
+
+            <motion.span
+              className="block bg-gradient-to-r from-violet-400 via-pink-500 to-fuchsia-300 bg-clip-text text-transparent"
+              animate={{ y: [-2, 2, -2] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            >
               Experience.
-            </span>
+            </motion.span>
           </h1>
+
+          {/* Subtext */}
           <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-12 font-medium">
-            One unified platform for booking stays, flights, cabs, food, and experiences—powered by real-time intelligence and secure payments.
+            One unified platform for booking stays, flights, cabs, food, and experiences—powered by <span className="text-indigo-300 font-semibold">real-time intelligence</span> and <span className="text-fuchsia-300 font-semibold">secure payments</span>.
           </p>
-          <div className="flex flex-col md:flex-row justify-center gap-4">
-            <Link href="/rooms" className="px-10 py-4 bg-white/15 text-bold font-bold uppercase tracking-widest rounded-full hover:bg-violet-900 hover:text-white transition-all">
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col md:flex-row justify-center gap-6">
+            <Link href="/rooms" className="px-12 py-4 bg-gradient-to-r from-indigo-500 via-teal-400 to-purple-500 text-white font-bold uppercase tracking-widest rounded-full shadow-xl hover:scale-105 hover:brightness-110 transition-all">
               Start Booking
             </Link>
-            <Link href="/admin" className="px-10 py-4 bg-white/5 border border-white/10 font-bold uppercase tracking-widest rounded-full hover:bg-white/10 hover:border hover:border-violet-400 transition-all">
+            <Link href="/admin" className="px-12 py-4 bg-black/40 border border-white/10 font-bold uppercase tracking-widest rounded-full text-white hover:bg-black/60 hover:border-indigo-400 transition-all">
               Launch Console
             </Link>
           </div>
 
-          <div className="mt-12 max-w-4xl mx-auto">
-            {/* TABS */}
-            <div className="flex justify-center gap-6 mb-4 text-xs text-gray-400">
-              <button className="text-indigo-400 font-bold">Hotels</button>
-              <button>Flights</button>
-              <button>Cabs</button>
-              <button>Food</button>
+          {/* Search Tabs + Bar */}
+          <div className="mt-16 max-w-4xl mx-auto">
+            {/* Tabs */}
+            <div className="flex justify-center gap-6 mb-4 text-xs text-gray-400 font-semibold">
+              <button className="text-indigo-400 hover:underline">Hotels</button>
+              <button className="hover:text-indigo-300 transition-colors">Flights</button>
+              <button className="hover:text-indigo-300 transition-colors">Cabs</button>
+              <button className="hover:text-indigo-300 transition-colors">Food</button>
             </div>
 
-            {/* SEARCH BAR */}
-            <div className="bg-white/5 border border-white/10 rounded-full p-2 flex gap-2 backdrop-blur">
+            {/* Search Input */}
+            <div className="bg-white/5 border border-white/10 rounded-full p-2 flex gap-2 backdrop-blur shadow-lg">
               <input
                 placeholder="Where are you going?"
-                className="flex-1 bg-transparent px-4 py-2 outline-none text-sm"
+                className="flex-1 bg-transparent px-4 py-2 text-sm text-white outline-none placeholder:text-gray-400"
               />
-              <button className="bg-indigo-500 px-6 py-2 rounded-full text-sm font-bold">
+              <button className="bg-gradient-to-r from-indigo-500 via-teal-400 to-purple-500 px-6 py-2 rounded-full text-sm font-bold text-white hover:brightness-110 transition-all">
                 Search
               </button>
             </div>
@@ -619,25 +650,63 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="py-16 px-8 border-t border-white/10 bg-[#050505] text-center">
+      <footer className="relative py-24 px-8 border-t border-white/[0.03] bg-[#020202] overflow-hidden">
 
-        <h3 className="text-xl font-semibold mb-4">YatriHub</h3>
+        {/* 🌌 Fading Backdrop Glow */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-teal-500/[0.02] blur-[120px] rounded-full pointer-events-none" />
 
-        <p className="text-sm text-gray-400 mb-6">
-          Next-gen unified travel ecosystem.
-        </p>
+        <div className="max-w-[1400px] mx-auto relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-left">
 
-        <div className="flex justify-center gap-6 text-sm text-gray-400">
-          <span className="hover:text-white cursor-pointer">About</span>
-          <span className="hover:text-white cursor-pointer">Careers</span>
-          <span className="hover:text-white cursor-pointer">Privacy</span>
-          <span className="hover:text-white cursor-pointer">Terms</span>
+            {/* BRAND COLUMN */}
+            <div className="lg:col-span-2">
+              <h3 className="text-2xl font-light tracking-[0.3em] text-white uppercase mb-6">
+                Yatri<span className="font-serif italic text-teal-400 lowercase tracking-normal">hub</span>
+              </h3>
+              <p className="text-[10px] text-zinc-500 uppercase tracking-[0.4em] leading-relaxed max-w-sm">
+                Architecting the next-gen unified travel ecosystem.
+                Refining the art of celestial transit.
+              </p>
+            </div>
+
+            {/* NAVIGATION LINKS */}
+            <div className="space-y-4">
+              <h4 className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.5em] mb-6">Network</h4>
+              <div className="flex flex-col gap-3 text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">
+                <span className="hover:text-teal-400 cursor-pointer transition-colors">About Alpha</span>
+                <span className="hover:text-teal-400 cursor-pointer transition-colors">Career Pathways</span>
+                <span className="hover:text-teal-400 cursor-pointer transition-colors">Partner Access</span>
+              </div>
+            </div>
+
+            {/* LEGAL / STATUS */}
+            <div className="space-y-4">
+              <h4 className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.5em] mb-6">Security</h4>
+              <div className="flex flex-col gap-3 text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">
+                <span className="hover:text-teal-400 cursor-pointer transition-colors">Privacy Protocol</span>
+                <span className="hover:text-teal-400 cursor-pointer transition-colors">Terms of Transit</span>
+                <div className="flex items-center gap-2 pt-2">
+                  <span className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse shadow-[0_0_8px_#2dd4bf]" />
+                  <span className="text-[8px] text-zinc-600 tracking-[0.3em]">SYSTEMS OPERATIONAL</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* BOTTOM BAR */}
+          <div className="mt-24 pt-8 border-t border-white/[0.03] flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-[8px] text-zinc-800 font-black uppercase tracking-[1em]">
+              © 2026 YatriHub Global Concierge
+            </p>
+
+            <div className="flex items-center gap-8">
+              <div className="h-px w-12 bg-zinc-900 hidden md:block" />
+              <p className="text-[8px] text-zinc-800 uppercase tracking-[0.5em] italic">
+                Designed for the modern voyager
+              </p>
+            </div>
+          </div>
         </div>
-
-        <p className="text-xs text-gray-600 mt-8">
-          © 2026 YatriHub. All rights reserved.
-        </p>
-
       </footer>
     </div>
   );

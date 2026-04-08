@@ -16,52 +16,58 @@ export default function DiscoveryGrid() {
     bookingForm,
     handleFormChange,
     resetBooking,
+    confirmReservation, // Using the logic from our updated hook
+    isSubmitting,
   } = useBooking();
 
   const categories = ["All", "Discovery", "Wellness", "Culinary", "Adventure"];
 
-  const filtered =
-    filter === "All"
-      ? experiences
-      : experiences.filter((exp) => exp.category === filter);
+  const filtered = filter === "All"
+    ? experiences
+    : experiences.filter((exp) => exp.category === filter);
 
   return (
     <div className="max-w-[1400px] mx-auto">
 
-      {/* FILTER BAR */}
-      <div className="flex flex-wrap gap-3 mb-10">
+      {/* 🔹 MINIMALIST FILTER BAR */}
+      <div className="flex items-center gap-2 mb-12 overflow-x-auto pb-4 no-scrollbar">
         {categories.map((cat) => {
           const active = filter === cat;
-
           return (
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className={`px-4 py-2 rounded-full text-sm transition ${
-                active
-                  ? "bg-white text-black"
-                  : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+              className={`relative px-6 py-2 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${
+                active ? "text-white" : "text-zinc-500 hover:text-zinc-300"
               }`}
             >
-              {cat}
+              <span className="relative z-10">{cat}</span>
+              {active && (
+                <motion.div
+                  layoutId="activeFilter"
+                  className="absolute inset-0 bg-zinc-800 border border-zinc-700 rounded-full -z-0"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
             </button>
           );
         })}
       </div>
 
-      {/* GRID */}
+      {/* 📦 INTELLIGENT GRID */}
       <motion.div
         layout
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
       >
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
           {filtered.map((exp) => (
             <motion.div
               key={exp.id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
+              layout // This makes the card slide when other cards are filtered out
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+              transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
             >
               <ExperienceCard
                 item={exp}
@@ -72,15 +78,26 @@ export default function DiscoveryGrid() {
         </AnimatePresence>
       </motion.div>
 
-      {/* MODAL */}
+      {/* EMPTY STATE (Filtered) */}
+      {filtered.length === 0 && (
+        <div className="py-40 text-center border border-dashed border-zinc-800 rounded-[2rem]">
+          <p className="text-zinc-500 font-medium tracking-tight">No experiences found in this category.</p>
+        </div>
+      )}
+
+      {/* MODAL LAYER */}
       <BookingModal
         item={selectedExp}
         form={bookingForm}
+        isSubmitting={isSubmitting}
         onFormChange={handleFormChange}
         onClose={resetBooking}
-        onConfirm={(data: any) => {
-          console.log("BOOKED:", data);
-          resetBooking();
+        onConfirm={async (data: any) => {
+          const result = await confirmReservation();
+          if (result?.success) {
+            // You could trigger a success toast here
+            resetBooking();
+          }
         }}
       />
     </div>

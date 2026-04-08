@@ -5,41 +5,38 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import {
-  FaUserCircle,
-  FaBars,
-  FaBell,
-  FaSearch,
-  FaTimes,
-} from "react-icons/fa";
+  FiUser,
+  FiMenu,
+  FiBell,
+  FiSearch,
+  FiX,
+  FiCompass,
+} from "react-icons/fi";
 
 export default function Navbar() {
   const pathname = usePathname();
-
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-
+  const [scrolled, setScrolled] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  // Close profile dropdown on outside click
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (
-        profileRef.current &&
-        !profileRef.current.contains(e.target as Node)
-      ) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setProfileOpen(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Lock scroll when mobile menu open
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "auto";
-  }, [mobileOpen]);
-
+  // ALL PREVIOUS LINKS INCLUDED
   const navItems = [
     { name: "Rooms", href: "/rooms" },
     { name: "Food", href: "/food" },
@@ -51,142 +48,142 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-black/60 border-b border-white/10">
-      {/* Glow line */}
-      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-40" />
+    <nav 
+      className={`fixed top-0 w-full z-50 transition-all duration-700 ${
+        scrolled ? "py-3 bg-black/80 backdrop-blur-2xl border-b border-white/5" : "py-6 bg-transparent"
+      }`}
+    >
+      {/* 🌌 High-Visibility Beam */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-[1px] bg-gradient-to-r from-transparent via-teal-500/40 to-transparent" />
 
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-[1400px] mx-auto px-8 flex items-center justify-between">
+        
         {/* LOGO */}
-        <Link href="/" className="text-xl font-bold tracking-tight">
-          HOTEL <span className="text-indigo-500">OS</span>
+        <Link href="/" className="group flex items-center gap-3 shrink-0">
+          <FiCompass className="text-teal-400 text-xl group-hover:rotate-180 transition-transform duration-1000" />
+          <span className="text-lg font-light tracking-[0.3em] text-white uppercase">
+            Yatri<span className="font-serif italic text-teal-400 lowercase tracking-normal">hub</span>
+          </span>
         </Link>
 
-        {/* NAV LINKS */}
-        <div className="hidden lg:flex items-center gap-8 text-[11px] font-bold uppercase tracking-widest">
+        {/* CENTER NAV: ALL 7 ITEMS */}
+        <div className="hidden xl:flex items-center gap-8">
           {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.href);
-
+            const isActive = pathname === item.href;
             return (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`relative group ${
-                  isActive ? "text-white" : "text-gray-400 hover:text-white"
-                }`}
+                className="relative group text-[9px] font-black uppercase tracking-[0.3em] transition-all"
               >
-                <span className="flex items-center gap-2">
-                  {item.name === "Bookings" && (
-                    <span className="w-1 h-1 bg-indigo-500 rounded-full animate-pulse" />
-                  )}
-                  {item.name === "Bookings" ? "My Bookings" : item.name}
+                <span className={`transition-colors duration-300 ${
+                  isActive ? "text-teal-400" : "text-zinc-500 group-hover:text-white"
+                }`}>
+                  {item.name}
                 </span>
-
-                {/* Active underline */}
+                
+                {/* Celestial Indicator */}
                 {isActive && (
-                  <motion.div
-                    layoutId="nav-underline"
-                    className="absolute -bottom-2 left-0 right-0 h-[2px] bg-indigo-500 rounded-full"
+                  <motion.div 
+                    layoutId="nav-glow"
+                    className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-1 h-1 bg-teal-400 rounded-full shadow-[0_0_10px_#2dd4bf]"
                   />
                 )}
-
-                {/* Hover underline */}
-                <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-white/40 group-hover:w-full transition-all duration-300" />
               </Link>
             );
           })}
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="flex items-center gap-4">
-          {/* SEARCH */}
-          <div className="hidden md:flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-2 focus-within:border-indigo-500 transition">
-            <FaSearch className="text-gray-400 mr-2" />
-            <input
-              placeholder="Search..."
-              className="bg-transparent outline-none text-white placeholder-gray-500 w-40"
-            />
+        {/* RIGHT SIDE ACTIONS */}
+        <div className="flex items-center gap-6">
+          
+          <div className="hidden md:flex items-center gap-5 text-zinc-500">
+            <FiSearch className="hover:text-white cursor-pointer transition-colors text-sm" />
+            <div className="relative group cursor-pointer">
+              <FiBell className="group-hover:text-white transition-colors text-sm" />
+              <span className="absolute -top-1 -right-1 w-1 h-1 bg-teal-500 rounded-full animate-pulse" />
+            </div>
           </div>
 
-          {/* NOTIFICATION */}
-          <div className="relative cursor-pointer">
-            <FaBell className="text-gray-400 hover:text-white transition" />
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
-          </div>
+          <div className="h-4 w-px bg-zinc-800 hidden sm:block" />
 
-          {/* CTA */}
-          <Link
-            href="/register"
-            className="hidden sm:block px-5 py-2 text-sm font-semibold bg-indigo-500 rounded-full hover:scale-105 transition"
-          >
-            Join
-          </Link>
-
-          {/* PROFILE */}
+          {/* PROFILE DROP-DOWN */}
           <div className="relative" ref={profileRef}>
-            <FaUserCircle
+            <button 
               onClick={() => setProfileOpen(!profileOpen)}
-              className="text-xl text-gray-400 hover:text-white cursor-pointer"
-            />
+              className="w-8 h-8 rounded-full border border-zinc-800 hover:border-teal-500/50 flex items-center justify-center transition-all bg-zinc-900/50 overflow-hidden"
+            >
+              <FiUser className="text-zinc-500 hover:text-white text-sm" />
+            </button>
 
             <AnimatePresence>
               {profileOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute right-0 mt-3 w-44 bg-black border border-white/10 rounded-xl overflow-hidden shadow-xl"
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 mt-4 w-48 bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-3xl"
                 >
-                  <Link href="/profile" className="block px-4 py-3 hover:bg-white/10">
-                    Profile
-                  </Link>
-                  <Link href="/bookings" className="block px-4 py-3 hover:bg-white/10">
-                    Bookings
-                  </Link>
-                  <div className="border-t border-white/10" />
-                  <button className="w-full text-left px-4 py-3 hover:bg-red-500/20 text-red-400">
-                    Logout
-                  </button>
+                  <div className="p-2 space-y-1">
+                    <Link href="/profile" className="block px-4 py-3 text-[10px] uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
+                      Profile Center
+                    </Link>
+                    <Link href="/bookings" className="block px-4 py-3 text-[10px] uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
+                      Active Transits
+                    </Link>
+                    <div className="h-px bg-white/5 mx-2" />
+                    <button className="w-full text-left px-4 py-3 text-[10px] uppercase tracking-widest text-teal-600 hover:text-teal-400 hover:bg-teal-500/5 rounded-xl transition-all font-bold">
+                      Sign Out
+                    </button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          {/* MOBILE BUTTON */}
-          <button className="lg:hidden" onClick={() => setMobileOpen(true)}>
-            <FaBars className="text-lg text-gray-300" />
+          {/* MOBILE TOGGLE (Show for anything smaller than XL) */}
+          <button className="xl:hidden p-2 text-zinc-400" onClick={() => setMobileOpen(true)}>
+            <FiMenu className="text-xl" />
           </button>
         </div>
       </div>
 
-      {/* MOBILE MENU */}
+      {/* MOBILE MENU: OVERLAY */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 260, damping: 25 }}
-            className="fixed top-0 right-0 w-72 h-full bg-black border-l border-white/10 p-6 z-50"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
+            className="fixed inset-0 bg-black z-[100] flex flex-col p-10 overflow-y-auto"
           >
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-lg font-bold">Menu</h2>
-              <FaTimes
-                className="cursor-pointer"
-                onClick={() => setMobileOpen(false)}
-              />
+            <div className="flex justify-between items-center mb-12">
+               <span className="text-[10px] tracking-[0.5em] text-zinc-700 font-black uppercase">Navigation Menu</span>
+               <FiX className="text-2xl text-zinc-500 cursor-pointer" onClick={() => setMobileOpen(false)} />
             </div>
 
-            <div className="flex flex-col gap-6">
-              {navItems.map((item) => (
-                <Link
+            <div className="flex flex-col gap-8">
+              {navItems.map((item, i) => (
+                <motion.div
                   key={item.name}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="text-gray-300 hover:text-white"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
                 >
-                  {item.name}
-                </Link>
+                  <Link
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="text-3xl font-light tracking-tighter text-zinc-200 hover:text-teal-400 transition-all uppercase"
+                  >
+                    {item.name}
+                  </Link>
+                </motion.div>
               ))}
+            </div>
+
+            <div className="mt-auto pt-10 border-t border-zinc-900 flex flex-col gap-4">
+               <Link href="/register" onClick={() => setMobileOpen(false)} className="text-teal-500 text-xs font-bold uppercase tracking-widest">Enroll Now</Link>
+               <p className="text-[8px] tracking-[0.3em] text-zinc-800 uppercase italic">Coordinates: 34.0522° N, 118.2437° W</p>
             </div>
           </motion.div>
         )}

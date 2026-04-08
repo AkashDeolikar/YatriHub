@@ -1,50 +1,53 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { FiArrowUpRight } from "react-icons/fi";
 
 export default function ExperienceCard({ item, onBook }: any) {
   return (
-    <motion.div
-      whileHover={{ y: -6 }}
-      className="group bg-[#111] rounded-xl overflow-hidden border border-white/10 hover:border-white/30 transition-all"
+    <div 
+      className="group cursor-pointer" 
+      onClick={() => onBook(item)}
     >
-      {/* IMAGE */}
-      <div className="relative h-52 overflow-hidden">
+      {/* 🖼️ CLEAN IMAGE CONTAINER */}
+      <div className="relative aspect-[16/10] overflow-hidden bg-zinc-900 rounded-xl mb-5">
         <img
           src={item.image}
-          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+          alt={item.name}
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
 
-        {/* CATEGORY BADGE */}
-        <span className="absolute top-3 left-3 bg-black/70 text-white text-xs px-3 py-1 rounded-full">
-          {item.category}
-        </span>
-      </div>
-
-      {/* CONTENT */}
-      <div className="p-5 space-y-3">
-        <h3 className="text-lg font-semibold text-white line-clamp-1">
-          {item.name}
-        </h3>
-
-        <p className="text-sm text-gray-400">
-          {item.duration} • {item.type}
-        </p>
-
-        {/* PRICE + BUTTON */}
-        <div className="flex items-center justify-between pt-3">
-          <span className="text-white font-semibold text-lg">
-            ₹{item.price}
+        {/* Floating Price - Simple & Static */}
+        <div className="absolute bottom-4 left-4">
+          <span className="bg-zinc-950/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/10 uppercase tracking-widest">
+            ₹{item.price.toLocaleString()}
           </span>
-
-          <button
-            onClick={() => onBook(item)}
-            className="bg-white text-black px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
-          >
-            Book
-          </button>
         </div>
       </div>
-    </motion.div>
+
+      {/* 📝 CONTENT */}
+      <div className="px-1">
+        <div className="flex justify-between items-start mb-2">
+          <div className="space-y-1">
+            <h3 className="text-lg font-medium tracking-tight text-zinc-100 group-hover:text-emerald-400 transition-colors">
+              {item.name}
+            </h3>
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+              <span>{item.category}</span>
+              <span className="w-1 h-1 bg-zinc-800 rounded-full" />
+              <span>{item.duration}</span>
+            </div>
+          </div>
+
+          {/* Minimal Icon Reveal */}
+          <div className="p-2 text-zinc-600 group-hover:text-emerald-500 transition-colors">
+            <FiArrowUpRight size={20} className="translate-y-1 -translate-x-1 group-hover:translate-y-0 group-hover:translate-x-0 transition-transform duration-300" />
+          </div>
+        </div>
+
+        {/* Thin Progress-style underline on hover */}
+        <div className="h-px w-0 bg-emerald-500/50 group-hover:w-full transition-all duration-500" />
+      </div>
+    </div>
   );
 }
