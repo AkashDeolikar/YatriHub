@@ -336,6 +336,7 @@ import {
   FaUtensils, FaConciergeBell, FaWineGlassAlt,
   FaClipboardList,
 } from "react-icons/fa";
+import Navbar from "../navbar";
 // --- TYPES ---
 type FoodItem = {
   id: number;
@@ -438,18 +439,18 @@ export default function CulinaryOS() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-teal-500/30">
-
       {/* --- MASTER HEADER --- */}
       <nav className="sticky top-0 z-50 bg-[#080808]/70 backdrop-blur-xl border-b border-white/[0.05] px-6 py-3">
         <div className="max-w-[1400px] mx-auto flex justify-between items-center">
 
           {/* 1. BRANDING: YatriHub Food */}
+      <Navbar />
           <div className="flex items-center gap-12">
             <Link href="/" className="flex items-center gap-3 group">
               <div className="relative">
-            <FiCompass className="text-teal-400 text-2xl group-hover:rotate-[360deg] transition-transform duration-1000 ease-expo" />
-            <div className="absolute inset-0 bg-teal-400/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
+                <FiCompass className="text-teal-400 text-2xl group-hover:rotate-[360deg] transition-transform duration-1000 ease-expo" />
+                <div className="absolute inset-0 bg-teal-400/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
               <div className="flex flex-col">
                 <span className="text-lg font-light tracking-tighter text-white leading-none">
                   YatriHub <span className="text-teal-500 font-medium">Food</span>
@@ -462,8 +463,8 @@ export default function CulinaryOS() {
               <button
                 onClick={() => setView("user")}
                 className={`px-6 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${view === "user"
-                    ? "bg-white text-black shadow-xl"
-                    : "text-gray-500 hover:text-white"
+                  ? "bg-white text-black shadow-xl"
+                  : "text-gray-500 hover:text-white"
                   }`}
               >
                 Storefront
@@ -471,8 +472,8 @@ export default function CulinaryOS() {
               <button
                 onClick={() => setView("paas")}
                 className={`px-6 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${view === "paas"
-                    ? "bg-teal-500 text-black shadow-xl"
-                    : "text-gray-500 hover:text-white"
+                  ? "bg-teal-500 text-black shadow-xl"
+                  : "text-gray-500 hover:text-white"
                   }`}
               >
                 Console
@@ -659,8 +660,8 @@ export default function CulinaryOS() {
                             <button
                               onClick={() => toggleAvailability(item.id)}
                               className={`relative overflow-hidden group/btn px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${item.isAvailable
-                                  ? 'border border-white/5 text-gray-500 hover:text-red-500 hover:bg-red-500/10'
-                                  : 'bg-white text-black hover:bg-teal-500 hover:text-white'
+                                ? 'border border-white/5 text-gray-500 hover:text-red-500 hover:bg-red-500/10'
+                                : 'bg-white text-black hover:bg-teal-500 hover:text-white'
                                 }`}
                             >
                               <span className="relative z-10">{item.isAvailable ? "Shutdown" : "Initialize"}</span>

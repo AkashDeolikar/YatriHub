@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaStar, FaShieldAlt, FaWifi, FaSnowflake, FaClock, FaLock } from "react-icons/fa";
 import { format, addDays } from "date-fns";
+import Navbar from "@/app/navbar";
 
 export default function MinimalistRoomPage() {
   const { id } = useParams();
@@ -36,6 +37,7 @@ export default function MinimalistRoomPage() {
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 selection:bg-neutral-100 font-sans antialiased">
+      <Navbar/>
       <main className="max-w-6xl mx-auto px-8 py-12 lg:py-20">
         <div className="grid lg:grid-cols-12 gap-20">
           
