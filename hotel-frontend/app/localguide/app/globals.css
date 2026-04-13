@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif; /* Professional sans-serif choice */
+  background-color: #ffffff;
+  color: #1a1a1a;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

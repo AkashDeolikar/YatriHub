@@ -320,6 +320,7 @@
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import RegistryConsole from "../food/admin";
 import {
   FaStar, FaCheckCircle, FaChartLine, FaServer,
   FaTerminal, FaShieldAlt, FaBoxOpen
@@ -440,11 +441,11 @@ export default function CulinaryOS() {
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-teal-500/30">
       {/* --- MASTER HEADER --- */}
+      {/* <Navbar /> */}
       <nav className="sticky top-0 z-50 bg-[#080808]/70 backdrop-blur-xl border-b border-white/[0.05] px-6 py-3">
         <div className="max-w-[1400px] mx-auto flex justify-between items-center">
 
           {/* 1. BRANDING: YatriHub Food */}
-      <Navbar />
           <div className="flex items-center gap-12">
             <Link href="/" className="flex items-center gap-3 group">
               <div className="relative">
@@ -503,295 +504,19 @@ export default function CulinaryOS() {
         </div>
       </nav>
 
-      <main className="max-w-[1400px] mx-auto px-8 py-12">
-        {view === "user" ? (
-          /* --- B2C: HIGH-DENSITY GUEST MENU --- */
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6"
-          >
-            {foodItems.map(item => (
-              <div key={item.id} className="group relative flex items-center bg-[#0a0a0a] border border-white/[0.03] hover:border-teal-500/30 p-4 rounded-xl transition-all duration-500">
-                {/* Compact Left-Side Image */}
-                <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg bg-[#111]">
-                  <img
-                    src={item.image}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${!item.isAvailable && 'opacity-20 grayscale'}`}
-                    alt={item.name}
-                  />
-                  {!item.isAvailable && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-[8px] font-black tracking-widest text-white/40 uppercase">Offline</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Right-Side Content: High Density */}
-                <div className="flex-1 pl-6 flex flex-col justify-between h-32">
-                  <div>
-                    <div className="flex justify-between items-start">
-                      <h3 className="text-xl font-light tracking-tight text-white leading-tight truncate group-hover:text-teal-400 transition-colors">
-                        {item.name}
-                      </h3>
-                      <span className="text-lg font-light text-white pl-4">₹{item.price}</span>
-                    </div>
-                    <p className="text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1">
-                      Node {item.id} • Kitchen-Core
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between items-center pt-4 border-t border-white/5">
-                    <span className="text-[9px] font-mono text-gray-600 uppercase tracking-tighter">Availability: {item.isAvailable ? '100%' : '0%'}</span>
-                    <button
-                      onClick={() => addToCart(item)}
-                      disabled={!item.isAvailable}
-                      className="text-[10px] font-bold uppercase tracking-[0.2em] text-teal-400 hover:text-white transition-colors disabled:opacity-0"
-                    >
-                      + Add to Folio
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        ) : (
-          /* --- B2B: PROFESSIONAL MANAGEMENT CONSOLE --- */
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-12"
-          >
-            {/* System Stats: Slim & Spacious */}
-            <header className="flex flex-col md:flex-row justify-between items-end border-b border-white/5 pb-10 gap-8">
-              <div>
-                <h2 className="text-3xl font-light tracking-tighter text-white">Registry Console</h2>
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em] mt-1">Global Instance: INDIA</p>
-              </div>
-              <div className="flex gap-10">
-                {[
-                  { label: "Revenue", val: "₹184.2k", color: "text-white" },
-                  { label: "System Health", val: "99.9%", color: "text-teal-500" },
-                  { label: "Requests", val: "1.2k", color: "text-gray-400" }
-                ].map((stat, i) => (
-                  <div key={i} className="text-right">
-                    <p className="text-[9px] font-bold text-gray-600 uppercase tracking-widest mb-1">{stat.label}</p>
-                    <p className={`text-xl font-medium ${stat.color}`}>{stat.val}</p>
-                  </div>
-                ))}
-              </div>
-            </header>
-
-            <div className="space-y-10">
-              {/* 1. GLOBAL TELEMETRY HEADER  */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                  { label: "Active Nodes", val: "24/25", detail: "+2.4% vs last hr", color: "text-teal-500" },
-                  { label: "Request Rate", val: "1.2k/s", detail: "Avg 45ms latency", color: "text-blue-500" },
-                  { label: "Security Tier", val: "Level 4", detail: "Encryption: AES-256", color: "text-purple-500" },
-                  { label: "System Load", val: "14.2%", detail: "Optimized (Mumbai)", color: "text-emerald-500" }
-                ].map((stat, i) => (
-                  <div key={i} className="bg-[#0c0c0c] border border-white/[0.08] p-6 rounded-[28px] hover:border-white/20 transition-colors">
-                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-3">{stat.label}</p>
-                    <h4 className={`text-2xl font-light tracking-tighter ${stat.color}`}>{stat.val}</h4>
-                    <p className="text-[9px] text-gray-600 font-mono mt-1 italic">{stat.detail}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                {/* 2. THE CENTRAL REGISTRY (Microsoft Fluent Surface) */}
-                <div className="lg:col-span-9">
-                  <div className="flex items-center justify-between mb-8 px-4">
-                    <div className="flex items-center gap-4">
-                      <div className="h-2 w-2 rounded-full bg-teal-500 animate-pulse shadow-[0_0_10px_rgba(20,184,166,0.8)]" />
-                      <h2 className="text-xl font-medium text-white tracking-tight">Production Cluster (LIVE)</h2>
-                    </div>
-                    <div className="flex bg-white/[0.03] border border-white/10 rounded-full p-1">
-                      <button className="px-4 py-1.5 rounded-full bg-white text-black text-[9px] font-black uppercase tracking-widest">List</button>
-                      <button className="px-4 py-1.5 rounded-full text-gray-500 text-[9px] font-black uppercase tracking-widest hover:text-white">Grid</button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    {foodItems.map((item) => (
-                      <motion.div
-                        layout
-                        key={item.id}
-                        className="group relative bg-gradient-to-r from-white/[0.02] to-transparent border border-white/[0.06] hover:border-teal-500/30 rounded-[20px] p-4 flex items-center gap-8 transition-all duration-500"
-                      >
-                        {/* Status Indicator Strip */}
-                        <div className={`absolute inset-y-4 left-0 w-[3px] rounded-r-full ${item.isAvailable ? 'bg-teal-500' : 'bg-red-500'} opacity-0 group-hover:opacity-100 transition-opacity`} />
-
-                        {/* Image Component with Microsoft Focus Ring */}
-                        <div className="relative h-14 w-14 shrink-0">
-                          <img
-                            src={item.image}
-                            className={`h-full w-full object-cover rounded-xl transition-all duration-700 ${!item.isAvailable && 'grayscale opacity-20 scale-95'}`}
-                          />
-                          <div className="absolute inset-0 rounded-xl border border-white/10 group-hover:border-teal-500/50 transition-colors" />
-                        </div>
-
-                        {/* Core Info - High Density */}
-                        <div className="flex-1 min-w-0 grid grid-cols-1 lg:grid-cols-3 items-center gap-8">
-                          <div className="col-span-1">
-                            <h4 className="text-sm font-semibold text-white/90 truncate">{item.name}</h4>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[9px] font-mono text-gray-600 bg-white/5 px-1.5 py-0.5 rounded uppercase">node_sys_{item.id}</span>
-                              <span className="text-[9px] text-teal-500 font-bold uppercase tracking-widest">Stable</span>
-                            </div>
-                          </div>
-
-                          {/* Functional Metric (Google Style) */}
-                          <div className="hidden lg:block col-span-1">
-                            <div className="flex items-center gap-4">
-                              <div className="flex flex-col">
-                                <span className="text-[8px] font-black text-gray-600 uppercase mb-1">Health Check</span>
-                                <div className="flex gap-1">
-                                  {[1, 2, 3, 4, 5].map((i) => (
-                                    <div key={i} className={`h-1 w-3 rounded-full ${item.isAvailable ? 'bg-teal-500/40' : 'bg-red-500/20'}`} />
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="col-span-1 text-right">
-                            <button
-                              onClick={() => toggleAvailability(item.id)}
-                              className={`relative overflow-hidden group/btn px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${item.isAvailable
-                                ? 'border border-white/5 text-gray-500 hover:text-red-500 hover:bg-red-500/10'
-                                : 'bg-white text-black hover:bg-teal-500 hover:text-white'
-                                }`}
-                            >
-                              <span className="relative z-10">{item.isAvailable ? "Shutdown" : "Initialize"}</span>
-                            </button>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 3. LOG TERMINAL (Code Editor Aesthetic) */}
-                <aside className="lg:col-span-3">
-                  <div className="bg-[#080808] border border-white/10 rounded-[28px] flex flex-col h-[600px] shadow-2xl">
-                    <div className="p-6 border-b border-white/5 flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Event Logger</span>
-                      <div className="flex gap-1.5">
-                        <div className="h-2 w-2 rounded-full bg-red-500/50" />
-                        <div className="h-2 w-2 rounded-full bg-amber-500/50" />
-                        <div className="h-2 w-2 rounded-full bg-emerald-500/50" />
-                      </div>
-                    </div>
-
-                    <div className="flex-1 p-6 overflow-y-auto no-scrollbar font-mono text-[10px] space-y-4">
-                      {logs.map((log) => (
-                        <div key={log.id} className="text-gray-500 leading-relaxed hover:text-white transition-colors cursor-default">
-                          <span className="text-teal-500/40 mr-2">➜</span>
-                          <span className="text-gray-700">[{new Date(log.id).toLocaleTimeString()}]</span> {log.msg}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="p-6 bg-white/[0.02] border-t border-white/5">
-                      <div className="p-4 rounded-2xl bg-teal-500/5 border border-teal-500/10">
-                        <p className="text-[9px] font-bold text-teal-500 uppercase mb-2">Cluster Status</p>
-                        <p className="text-[11px] text-gray-400 font-light leading-relaxed">System is running in synchronized mode across 3 availability zones.</p>
-                      </div>
-                    </div>
-                  </div>
-                </aside>
-              </div>
-
-
-              {/* //
-              <div className="flex flex-col lg:flex-row gap-8 min-h-[800px]">
-                <aside className="lg:w-1/4 space-y-6">
-                  <div className="p-6 bg-white/[0.02] border border-white/[0.08] rounded-[32px] backdrop-blur-3xl">
-                    <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.4em] mb-8">System Health</h4>
-
-                    <div className="space-y-8">
-                      {[
-                        { label: "Compute", value: "88%", color: "bg-teal-500" },
-                        { label: "Memory", value: "42%", color: "bg-purple-500" },
-                        { label: "Latency", value: "14ms", color: "bg-amber-500" }
-                      ].map((stat) => (
-                        <div key={stat.label}>
-                          <div className="flex justify-between text-[11px] mb-3">
-                            <span className="text-white/60 font-medium">{stat.label}</span>
-                            <span className="font-mono text-white">{stat.value}</span>
-                          </div>
-                          <div className="h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: stat.value.includes('%') ? stat.value : '70%' }}
-                              className={`h-full ${stat.color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="p-6 bg-teal-500 text-black rounded-[32px] shadow-2xl shadow-teal-500/20">
-                    <p className="text-[10px] font-black uppercase tracking-widest mb-2 opacity-60">Session Active</p>
-                    <p className="text-xl font-light leading-tight">All hospitality nodes are currently synchronized.</p>
-                  </div>
-                </aside>
-
-                <main className="lg:w-1/2 space-y-6">
-                  <header className="flex items-center justify-between px-4">
-                    <h2 className="text-2xl font-light text-white tracking-tight">Resource Management</h2>
-                    <div className="flex gap-2">
-                      <div className="h-8 w-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white cursor-pointer transition-all">
-                        <FiFilter size={14} />
-                      </div>
-                      <div className="h-8 w-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white cursor-pointer transition-all">
-                        <FiRefreshCw size={14} />
-                      </div>
-                    </div>
-                  </header>
-
-                  <div className="grid grid-cols-1 gap-4">
-                    {foodItems.map((item) => (
-                      <motion.div
-                        whileHover={{ scale: 1.01 }}
-                        key={item.id}
-                        className="relative overflow-hidden group bg-[#0f0f0f] border border-white/[0.06] rounded-[24px] p-5 flex items-center gap-6 transition-all hover:bg-white/[0.04] hover:border-white/10"
-                      >
-                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${item.isAvailable ? 'bg-teal-500' : 'bg-red-500'} opacity-50`} />
-
-                        <div className="h-20 w-20 shrink-0 rounded-2xl overflow-hidden bg-black border border-white/5">
-                          <img src={item.image} className={`h-full w-full object-cover transition-all duration-700 group-hover:scale-110 ${!item.isAvailable && 'grayscale opacity-40'}`} />
-                        </div>
-
-                        <div className="flex-1">
-                          <div className="flex justify-between items-start mb-1">
-                            <h4 className="text-base font-medium text-white/90">{item.name}</h4>
-                            <span className="text-xs font-mono text-gray-500 italic">v1.0.2</span>
-                          </div>
-                          <p className="text-[10px] text-gray-600 font-mono tracking-tighter uppercase mb-4">DEPLOY_ID: {item.id}00X9</p>
-
-                          <div className="flex items-center gap-6">
-                            <button
-                              onClick={() => toggleAvailability(item.id)}
-                              className={`text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-2 transition-colors ${item.isAvailable ? 'text-teal-500 hover:text-teal-300' : 'text-red-500 hover:text-red-300'}`}
-                            >
-                              <div className={`h-1.5 w-1.5 rounded-full ${item.isAvailable ? 'bg-teal-500' : 'bg-red-500'} animate-pulse`} />
-                              {item.isAvailable ? 'Suspend Service' : 'Resume Service'}
-                            </button>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-              // */}
-
-            </div>
-          </motion.div>
-        )}
-      </main>
+      {/* <RegistryConsole 
+        view={view}
+        foodItems={foodItems}
+        toggleAvailability={toggleAvailability}
+        addToCart={addToCart}
+        logs={logs}
+      /> */}
+      <RegistryConsole 
+  view={view}
+  foodItems={foodItems}
+  toggleAvailability={toggleAvailability}
+  addToCart={addToCart}
+/>
 
       <AnimatePresence>
         {isCartOpen && (

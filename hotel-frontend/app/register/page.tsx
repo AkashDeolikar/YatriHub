@@ -1,176 +1,287 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  MotionValue,
+} from 'framer-motion';
 import Link from 'next/link';
 
+/* =========================
+   🔹 TYPES
+========================= */
+type FormState = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+type FieldConfig = {
+  label: string;
+  key: keyof FormState;
+  type: string;
+};
+
+type InputProps = {
+  label: string;
+  type: string;
+  value: string;
+  error?: string;
+  onChange: (val: string) => void;
+};
+
+type BackgroundProps = {
+  yDots: MotionValue<number>;
+  yMain: MotionValue<number>;
+  rotate: MotionValue<number>;
+};
+
+/* =========================
+   🔹 CONFIG
+========================= */
+const inputFields: FieldConfig[] = [
+  { label: 'Full Name', key: 'name', type: 'text' },
+  { label: 'Email Address', key: 'email', type: 'email' },
+  { label: 'Password', key: 'password', type: 'password' },
+];
+
+/* =========================
+   🔹 VALIDATION ENGINE
+========================= */
+const validateForm = (form: FormState) => {
+  const errors: Partial<FormState> = {};
+
+  if (!form.name) errors.name = 'Name is required';
+
+  if (!form.email) errors.email = 'Email is required';
+  else if (!/\S+@\S+\.\S+/.test(form.email))
+    errors.email = 'Invalid email format';
+
+  if (!form.password) errors.password = 'Password is required';
+  else if (form.password.length < 6)
+    errors.password = 'Minimum 6 characters required';
+
+  return errors;
+};
+
+/* =========================
+   🔹 MAIN COMPONENT
+========================= */
 export default function RegisterPage() {
   const router = useRouter();
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // Parallax logic
+  /* 🌌 PARALLAX */
   const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, -150]);
-  const yDots = useTransform(scrollY, [0, 500], [0, -50]); // Slower parallax for dots
-  const rotate = useTransform(scrollY, [0, 500], [0, 25]);
+  const yMain = useTransform(scrollY, [0, 500], [0, -120]);
+  const yDots = useTransform(scrollY, [0, 500], [0, -40]);
+  const rotate = useTransform(scrollY, [0, 500], [0, 20]);
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  /* 🧠 STATE */
+  const [form, setForm] = useState<FormState>({
+    name: '',
+    email: '',
+    password: '',
+  });
+
+  const [errors, setErrors] = useState<Partial<FormState>>({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+
+  /* =========================
+     🔹 HANDLERS
+  ========================= */
+  const handleChange = useCallback(
+    (key: keyof FormState, value: string) => {
+      setForm((prev) => ({ ...prev, [key]: value }));
+
+      // clear error on typing
+      setErrors((prev) => ({ ...prev, [key]: '' }));
+    },
+    []
+  );
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !password) {
-      setError('ALL COORDINATES REQUIRED');
-      return;
-    }
+
+    const validationErrors = validateForm(form);
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) return;
+
     setLoading(true);
-    // ... rest of your logic
+
+    try {
+      // 🔌 Replace with real API
+      await new Promise((res) => setTimeout(res, 1500));
+
+      router.push('/dashboard');
+    } catch {
+      setErrors({ email: 'Registration failed' });
+    } finally {
+      setLoading(false);
+    }
   };
 
+  /* =========================
+     🔹 UI
+  ========================= */
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-[#020202] text-zinc-400 flex flex-col items-center justify-center p-6 selection:bg-teal-500/30 overflow-hidden cursor-default"
+      className="min-h-screen bg-[#020202] flex items-center justify-center px-6 text-zinc-400"
     >
-      {/* 🌌 ATMOSPHERIC DEPTH: MULTI-LAYERED BACKGROUND */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        
-        {/* Layer 1: The Technical Grid */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
-          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-
-        {/* Layer 2: Parallax Particle Dots (The "Hub" Nodes) */}
-        <motion.svg 
-          style={{ y: yDots }}
-          className="absolute inset-0 w-full h-full opacity-20"
-        >
-          {/* Creating a scattered "constellation" of dots */}
-          {[...Array(20)].map((_, i) => (
-            <motion.circle
-              key={i}
-              cx={`${Math.random() * 100}%`}
-              cy={`${Math.random() * 100}%`}
-              r={Math.random() * 1.5}
-              fill="#2dd4bf"
-              initial={{ opacity: 0.1 }}
-              animate={{ opacity: [0.1, 0.4, 0.1] }}
-              transition={{ 
-                duration: 3 + Math.random() * 4, 
-                repeat: Infinity, 
-                delay: Math.random() * 5 
-              }}
-            />
-          ))}
-        </motion.svg>
-
-        {/* Layer 3: The Main Aetherial Petal */}
-        <motion.svg
-          style={{ y: y1, rotate }}
-          viewBox="0 0 800 800"
-          className="absolute -right-40 -bottom-40 md:-right-20 md:-top-20 w-[800px] h-[800px] md:w-[1000px] md:h-[1000px]"
-          fill="none"
-        >
-          <defs>
-            <linearGradient id="line-gradient" x1="400" y1="0" x2="400" y2="800" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#2dd4bf" stopOpacity="0" />
-              <stop offset="0.5" stopColor="#2dd4bf" stopOpacity="0.8" />
-              <stop offset="1" stopColor="#2dd4bf" stopOpacity="0" />
-            </linearGradient>
-            <radialGradient id="soft-glow" cx="400" cy="400" r="300">
-              <stop offset="0%" stopColor="#2dd4bf" stopOpacity="0.08" />
-              <stop offset="100%" stopColor="#2dd4bf" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          <circle cx="400" cy="400" r="300" fill="url(#soft-glow)" />
-          <motion.path
-            d="M400 50 C 100 50, 50 250, 400 750 C 750 300, 700 50, 400 50"
-            stroke="url(#line-gradient)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
-          />
-        </motion.svg>
-
-        {/* Layer 4: Grain Texture Overlay */}
-        <div className="absolute inset-0 opacity-[0.02] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-      </div>
+      <BackgroundEffects yDots={yDots} yMain={yMain} rotate={rotate} />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 w-full max-w-[340px]"
+        className="relative z-10 w-full max-w-sm"
       >
-        {/* BRANDING */}
-        <header className="mb-12 text-center">
-          <motion.h1 className="text-4xl font-light text-white uppercase tracking-[0.25em]">
-            Yatri<span className="text-teal-400 font-serif italic lowercase tracking-normal">hub</span>
-          </motion.h1>
-          <div className="flex items-center justify-center gap-3 mt-4 text-zinc-500 uppercase font-black text-[8px] tracking-[0.5em]">
-            <div className="h-px w-6 bg-zinc-900" />
-            <p>Credential Enrollment</p>
-            <div className="h-px w-6 bg-zinc-900" />
-          </div>
-        </header>
+        <Header />
 
-        {/* FORM */}
-        <form onSubmit={handleRegister} className="space-y-8">
-          <AnimatePresence mode="wait">
-            {error && (
-              <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="py-2 border-b border-teal-500/20 text-center">
-                <p className="text-[9px] text-teal-400 tracking-[0.2em] uppercase font-bold">{error}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
+        <form onSubmit={handleRegister} className="space-y-8" noValidate>
           <div className="space-y-6">
-            {['Full Designation', 'Identity', 'Security'].map((label, idx) => (
-              <div key={label} className="group relative">
-                <label className="text-[7px] font-black tracking-[0.3em] text-zinc-700 group-focus-within:text-teal-400 transition-colors uppercase">{label}</label>
-                <input
-                  type={label === 'Security' ? 'password' : 'text'}
-                  placeholder={label.toUpperCase()}
-                  onChange={(e) => {
-                    if(idx === 0) setName(e.target.value);
-                    if(idx === 1) setEmail(e.target.value);
-                    if(idx === 2) setPassword(e.target.value);
-                  }}
-                  className="w-full bg-transparent border-b border-zinc-900 py-3 text-xs tracking-[0.2em] text-white outline-none transition-all focus:border-teal-500/30 placeholder:text-zinc-900 font-medium"
-                />
-              </div>
+            {inputFields.map((field) => (
+              <InputField
+                key={field.key}
+                label={field.label}
+                type={field.type}
+                value={form[field.key]}
+                error={errors[field.key]}
+                onChange={(val) => handleChange(field.key, val)}
+              />
             ))}
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full relative group mt-6 overflow-hidden bg-white text-black py-4 rounded-full text-[10px] font-black uppercase tracking-[0.4em] transition-all
-            hover:text-teal-400
-            hover:shadow-[inset_0_0_30px_rgba(45,112,101,0.3)] 
-            active:scale-[0.98] disabled:bg-zinc-900 disabled:text-zinc-600"
-          >
-            <span className="relative z-10">{loading ? 'Processing...' : 'Complete Enrollment'}</span>
-            <motion.div className="absolute inset-0 bg-[#080808]" initial={{ y: "100%" }} whileHover={{ y: 0 }} transition={{ duration: 0.4 }} />
-          </button>
+          <SubmitButton loading={loading} />
         </form>
 
-        <footer className="mt-20 text-center flex flex-col items-center gap-6">
-          <Link href="/login" className="text-[9px] tracking-[0.3em] uppercase font-bold text-zinc-700 hover:text-white transition-all underline underline-offset-8 decoration-zinc-900">
-            Already an active traveler?
-          </Link>
-          <p className="text-[6px] text-zinc-800 tracking-[0.8em] uppercase">Global Concierge &copy; 2026</p>
-        </footer>
+        <Footer />
       </motion.div>
+    </div>
+  );
+}
+
+/* =========================
+   🔹 COMPONENTS
+========================= */
+
+function Header() {
+  return (
+    <header className="mb-12 text-center">
+      <h1 className="text-4xl font-light text-white tracking-[0.25em] uppercase">
+        Yatri
+        <span className="text-teal-400 italic lowercase tracking-normal">
+          hub
+        </span>
+      </h1>
+
+      <p className="mt-4 text-[10px] tracking-[0.4em] text-zinc-500 uppercase">
+        Credential Enrollment
+      </p>
+    </header>
+  );
+}
+
+function InputField({ label, type, value, error, onChange }: InputProps) {
+  return (
+    <div className="group">
+      <label className="text-[9px] uppercase tracking-widest text-zinc-600 group-focus-within:text-teal-400 transition">
+        {label}
+      </label>
+
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={label.toUpperCase()}
+        aria-invalid={!!error}
+        aria-describedby={`${label}-error`}
+        className={`w-full bg-transparent border-b py-3 text-sm text-white outline-none transition
+          ${error ? 'border-red-500' : 'border-zinc-800 focus:border-teal-500'}
+        `}
+      />
+
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            id={`${label}-error`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="text-[10px] text-red-400 mt-1"
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function SubmitButton({ loading }: { loading: boolean }) {
+  return (
+    <button
+      type="submit"
+      disabled={loading}
+      className="w-full py-4 rounded-full bg-white text-black text-sm font-semibold tracking-widest hover:scale-[1.02] transition disabled:opacity-50"
+    >
+      {loading ? 'Processing...' : 'Create Account'}
+    </button>
+  );
+}
+
+function Footer() {
+  return (
+    <div className="mt-16 text-center space-y-4">
+      <Link
+        href="/login"
+        className="text-xs text-zinc-500 hover:text-white transition"
+      >
+        Already have an account?
+      </Link>
+
+      <p className="text-[10px] text-zinc-700">
+        © 2026 YatriHub
+      </p>
+    </div>
+  );
+}
+
+/* =========================
+   🌌 BACKGROUND
+========================= */
+
+function BackgroundEffects({ yDots, yMain, rotate }: BackgroundProps) {
+  return (
+    <div className="fixed inset-0 pointer-events-none">
+
+      {/* Grid */}
+      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] bg-[size:40px_40px]" />
+
+      {/* Dots (stable positions) */}
+      <motion.div style={{ y: yDots }} className="absolute inset-0 opacity-20">
+        {[...Array(20)].map((_, i) => (
+          <span
+            key={i}
+            className="absolute w-[2px] h-[2px] bg-teal-400 rounded-full"
+            style={{
+              top: `${(i * 13) % 100}%`,
+              left: `${(i * 29) % 100}%`,
+            }}
+          />
+        ))}
+      </motion.div>
+
+      {/* Glow */}
+      <motion.div
+        style={{ y: yMain, rotate }}
+        className="absolute -right-40 top-0 w-[600px] h-[600px] bg-teal-500/10 blur-[120px] rounded-full"
+      />
     </div>
   );
 }

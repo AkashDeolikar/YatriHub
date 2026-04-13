@@ -10,6 +10,11 @@ import {
 import { useState } from "react";
 const TABS = ["Hotels", "Flights", "Cabs", "Food"];
 import Navbar from "./navbar";
+import { ContentItem } from "./content";
+import HeroSection from "./herotab";
+import FAANGBentoGrid from "./dumpcode/hero2";
+import RoomsSection from "./premium";
+import EcosystemSection from "./supertravel";
 
 function DiscoveryServiceCard({ number, name, href, desc }: any) {
   return (
@@ -48,12 +53,115 @@ function DiscoveryServiceCard({ number, name, href, desc }: any) {
 export default function Home() {
   // Inside your export default function Home() { ... }
   const [activeTab, setActiveTab] = useState("Hotels");
+  // const [search, setSearch] = useState("");
   const chartData = [40, 70, 45, 90, 65, 80, 30, 50, 40, 60, 85, 45, 75, 55, 95];
   const words = [
     { text: "Travel", color: "from-gray-100 to-gray-300", indent: 0 },
     { text: "Stay", color: "from-indigo-400 via-teal-400 to-emerald-400", indent: 200 },
     { text: "Move", color: "from-fuchsia-400 via-pink-400 to-indigo-300", indent: 350 },
     { text: "Experience", color: "from-violet-400 via-pink-500 to-fuchsia-300", indent: 500 },
+  ];
+  const services = [
+    {
+      icon: <FaCar />,
+      name: "Cab Hub",
+      desc: "Real-time rides with smart pricing & AI routing",
+      href: "/travel/cab",
+    },
+    {
+      icon: <FaPlane />,
+      name: "Flights",
+      desc: "Global routes with predictive fare intelligence",
+      href: "/travel/flights",
+    },
+    {
+      icon: <FaTrain />,
+      name: "Rail",
+      desc: "Live seat tracking & instant booking system",
+      href: "/travel/trains",
+    },
+    {
+      icon: <FaUtensils />,
+      name: "Gourmet",
+      desc: "Luxury dining & curated in-room experiences",
+      href: "/food",
+    },
+  ];
+  const items = [
+    {
+      icon: <FaUtensils />,
+      name: "Main Course",
+      cat: "indian",
+      desc: "Curated fine dining experiences",
+      delay: 0,
+    },
+    {
+      icon: <FaPizzaSlice />,
+      name: "Fast Track",
+      cat: "pizza",
+      desc: "Quick bites with urban flavors",
+      delay: 0.1,
+    },
+    {
+      icon: <FaCocktail />,
+      name: "Mixology",
+      cat: "liquor",
+      desc: "Premium cocktails & crafted spirits",
+      delay: 0.2,
+    },
+    {
+      icon: <FaIceCream />,
+      name: "Patisserie",
+      cat: "desserts",
+      desc: "Artisan desserts & sweet finales",
+      delay: 0.3,
+    },
+  ];
+
+  const experiences = [
+    {
+      num: "01",
+      name: "Wellness",
+      desc: "Therapeutic rituals & spa experiences",
+      cat: "Wellness",
+    },
+    {
+      num: "02",
+      name: "Adventures",
+      desc: "Outdoor and high-altitude activities",
+      cat: "Adventure",
+    },
+    {
+      num: "03",
+      name: "Culinary",
+      desc: "Private dining & chef-led sessions",
+      cat: "Culinary",
+    },
+    {
+      num: "04",
+      name: "Local Arts",
+      desc: "Exclusive galleries & cultural access",
+      cat: "Discovery",
+    },
+  ];
+  const demoData = [
+    {
+      id: 1,
+      title: "Inception",
+      year: "2010",
+      duration: "2h 28m",
+      genre: "Sci-Fi",
+      image: "/poster.jpg",
+      featured: true,
+    },
+    {
+      id: 2,
+      title: "Dhurandhar",
+      year: "2026",
+      genre: "Action",
+      image: "/poster.jpg",
+    },
+    // add more...
   ];
   return (
     <div className="min-h-screen bg-[#000] text-white selection:bg-indigo-500/30">
@@ -67,181 +175,8 @@ export default function Home() {
       <Navbar />
 
       {/* HERO SECTION */}
-      <section className="relative pt-28 pb-24 px-6 text-center overflow-hidden">
-        {/* 🌌 Background Cosmic Layers */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-[-20%] left-[-15%] w-[80%] h-[80%] bg-indigo-600/10 blur-[180px] rounded-full animate-pulse" />
-          <div className="absolute bottom-[-15%] right-[-10%] w-[60%] h-[60%] bg-fuchsia-500/10 blur-[140px] rounded-full" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_#020202_85%)]" />
-          <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-          className="relative max-w-7xl mx-auto"
-        >
-          {/* ✨ Tagline */}
-          <span className="px-4 py-1.5 rounded-full border border-teal-500/20 bg-teal-500/5 backdrop-blur-md text-teal-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-8 inline-block">
-            ✨ Now Live: Summer Collection 2026
-          </span>
-
-          {/* 🌟 Hero Heading */}
-          <div className="relative py-20 px-10">
-            {/* Screen Reader Only Title for SEO/Accessibility */}
-            <h1 className="sr-only">Travel. Stay. Move. Experience.</h1>
-
-            <div className="relative z-10 flex flex-col gap-4 md:gap-2" aria-hidden="true">
-              {words.map((word, i) => (
-                <motion.div
-                  key={`${word.text}-${i}`}
-                  initial={{ opacity: 0, x: -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-                  style={{ paddingLeft: `${word.indent}px` }}
-                  className="relative flex items-center group w-fit"
-                >
-                  {/* Animated Step Indicator Dot */}
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.15 + 0.4 }}
-                    className="absolute -left-8 w-3 h-3 rounded-full border border-white/30 bg-white/10 group-hover:bg-teal-400 group-hover:border-teal-400 transition-colors hidden md:block"
-                  />
-
-                  <span className={`
-                      text-5xl md:text-8xl font-black tracking-tighter uppercase leading-none
-                      bg-gradient-to-r ${word.color} bg-clip-text text-transparent
-                      hover:brightness-125 transition-all duration-300 cursor-default select-none
-                    `}>
-                    {word.text}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* The Animated "Path" Line */}
-            <svg
-              className="absolute top-0 left-0 w-full h-full pointer-events-none hidden md:block"
-              viewBox="0 0 400 400"
-              preserveAspectRatio="none"
-            >
-              <motion.path
-                /**
-                 * Petal Logic:
-                 * M 100 350 : Start at the bottom (stem)
-                 * Q 0 200, 100 50 : Curve out to the left and meet at the tip
-                 * Q 200 200, 100 350 : Curve out to the right and return to the base
-                 */
-                d="M 100 350 Q 0 200, 100 50 Q 200 200, 100 350"
-                stroke="url(#petal-gradient)"
-                strokeWidth="1.5"
-                fill="url(#petal-fill)"
-                initial={{ pathLength: 0, opacity: 0, scale: 0.8 }}
-                whileInView={{ pathLength: 1, opacity: 0.6, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{
-                  duration: 2.5,
-                  delay: 0.5,
-                  ease: [0.16, 1, 0.3, 1]
-                }}
-                style={{
-                  filter: "drop-shadow(0px 0px 10px rgba(45, 212, 191, 0.2))",
-                  transformOrigin: "bottom center"
-                }}
-              />
-              <motion.path
-                d="M 150 500 Q 50 200, 400 50 Q 200 400, 400 350"
-                stroke="url(#petal-gradient)"
-                strokeWidth="1"
-                fill="url(#petal-fill)"
-                initial={{ pathLength: 0, opacity: 0, scale: 0.8 }}
-                whileInView={{ pathLength: 1, opacity: 0.6, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{
-                  duration: 3.5,
-                  delay: 1.5,
-                  ease: [0.16, 1, 0.7, 1]
-                }}
-                style={{
-                  filter: "drop-shadow(0px 0px 10px rgba(45, 212, 191, 0.2))",
-                  transformOrigin: "bottom center"
-                }}
-              />
-              <defs>
-                {/* Outline Gradient */}
-                <linearGradient id="petal-gradient" x1="0" y1="1" x2="0" y2="0">
-                  <stop offset="0%" stopColor="#2dd4bf" stopOpacity="0" />
-                  <stop offset="50%" stopColor="#2dd4bf" />
-                  <stop offset="100%" stopColor="white" />
-                </linearGradient>
-
-                {/* Subtle Inner Glow Fill */}
-                <radialGradient id="petal-fill" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#2dd4bf" stopOpacity="0.1" />
-                  <stop offset="100%" stopColor="#2dd4bf" stopOpacity="0" />
-                </radialGradient>
-              </defs>
-            </svg>
-          </div>
-
-          <div className="mt-16 max-w-4xl mx-auto w-full px-4">
-            {/* 🌟 Animated Tabs */}
-            <div className="flex justify-center gap-8 mb-6">
-              {TABS.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`relative pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === tab ? "text-indigo-400" : "text-gray-500 hover:text-gray-300"
-                    }`}
-                >
-                  {tab}
-                  {activeTab === tab && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-teal-400"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* 🌟 Search Input Group */}
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="group bg-white/5 border border-white/10 rounded-full p-2 flex items-center gap-2 backdrop-blur-xl shadow-2xl focus-within:border-indigo-500/50 focus-within:bg-white/[0.08] transition-all duration-300"
-            >
-              <div className="pl-4 text-gray-400 group-focus-within:text-indigo-400 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-
-              <input
-                type="text"
-                placeholder={`Search for ${activeTab.toLowerCase()}...`}
-                className="flex-1 bg-transparent py-3 text-base text-white outline-none placeholder:text-gray-500 font-medium"
-              />
-
-              <button className="bg-gradient-to-r from-indigo-600 via-teal-500 to-purple-600 px-8 py-3 rounded-full text-sm font-black uppercase tracking-tighter text-white hover:scale-[1.02] active:scale-95 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all duration-200">
-                Search
-              </button>
-            </motion.div>
-
-            {/* Quick Suggestions (Optional Production Touch) */}
-            <p className="mt-4 text-center text-[10px] text-gray-500 font-medium uppercase tracking-widest opacity-60">
-              Popular: <span className="text-gray-300 cursor-pointer hover:text-indigo-400">Manali</span>,
-              <span className="text-gray-300 ml-2 cursor-pointer hover:text-indigo-400">Goa</span>,
-              <span className="text-gray-300 ml-2 cursor-pointer hover:text-indigo-400">Leh</span>
-            </p>
-          </div>
-        </motion.div>
-      </section>
+      <HeroSection/>
+      {/* <FAANGBentoGrid/> */}
 
       {/* BENTO GRID FEATURES */}
       <section className="py-24 px-6 max-w-7xl mx-auto">
@@ -409,6 +344,8 @@ export default function Home() {
         </div>
       </section>
 
+      <RoomsSection/>
+
       {/* PREMIER ROOMS ECOSYSTEM */}
       <section className="py-24 border-t border-white/5 bg-black relative overflow-hidden">
         {/* Background Ambient Light */}
@@ -422,11 +359,12 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-xs font-black tracking-[0.4em] text-indigo-500 uppercase mb-4">
+              <h2 className="text-xs tracking-[0.35em] text-indigo-400 uppercase mb-4">
                 Accommodations
               </h2>
-              <h3 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
-                Premier <span className="text-white/50">Environments</span>
+
+              <h3 className="text-4xl md:text-6xl font-semibold text-white leading-tight">
+                Premier <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500"> Environments</span>
               </h3>
             </motion.div>
 
@@ -505,142 +443,86 @@ export default function Home() {
       </section>
 
       {/* TRAVEL SERVICE SELECTOR */}
-      <section className="py-24 border-t border-white/5 bg-[#050505] relative overflow-hidden">
+      <section className="relative py-28 bg-[#050505] overflow-hidden">
 
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent" />
+        {/* 🌌 Background Glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.15),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(168,85,247,0.12),transparent_40%)]" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
 
           {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
-
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
             <div>
-              <h2 className="text-xs font-semibold tracking-[0.3em] text-indigo-400 uppercase mb-3">
+              <h2 className="text-xs tracking-[0.35em] text-indigo-400 uppercase mb-4">
                 Ecosystem
               </h2>
 
-              <h3 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
-                Travel Services
+              <h3 className="text-4xl md:text-6xl font-semibold text-white leading-tight">
+                Intelligent Travel <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
+                  Super Platform
+                </span>
               </h3>
+
+              <p className="text-gray-400 mt-4 max-w-md">
+                A unified system combining mobility, booking, food, and real-time intelligence into one seamless journey.
+              </p>
             </div>
 
-            {/* CTA */}
             <Link
               href="/travel"
-              className="group inline-flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition"
+              className="group flex items-center gap-2 text-sm text-gray-300 hover:text-white transition"
             >
-              View all services
-              <span className="text-indigo-400 transition-transform group-hover:translate-x-1">
+              Explore ecosystem
+              <span className="text-indigo-400 group-hover:translate-x-1 transition">
                 →
               </span>
             </Link>
           </div>
 
-          {/* Services Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-            <ServiceCard
-              icon={<FaCar />}
-              name="Cab Hub"
-              href="/travel/cab"
-              desc="Ride integrations with real-time pricing"
-            />
-
-            <ServiceCard
-              icon={<FaPlane />}
-              name="Flights"
-              href="/travel/flights"
-              desc="Global routes with dynamic fares"
-            />
-
-            <ServiceCard
-              icon={<FaTrain />}
-              name="Rail"
-              href="/travel/trains"
-              desc="Live seat availability & tracking"
-            />
-
-            <ServiceCard
-              icon={<FaUtensils />}
-              name="Gourmet"
-              href="/food"
-              desc="In-room dining & curated menus"
-            />
-
-          </div>
-        </div>
-      </section>
-
-      {/* GOURMET ECOSYSTEM SECTION */}
-      <section className="py-24 border-t border-white/5 bg-[#050505] relative overflow-hidden group/culinary">
-        {/* Ambient Culinary Glow */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-600/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-fuchsia-600/5 blur-[100px] rounded-full pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-xs font-black tracking-[0.4em] text-purple-400 uppercase mb-4">
-                Culinary Excellence
-              </h2>
-              <h3 className="text-4xl md:text-5xl font-bold text-white leading-none">
-                Gourmet <span className="text-purple-200/30">Services</span>
-              </h3>
-            </motion.div>
-
-            <Link
-              href="/food"
-              className="group/cta flex items-center gap-4 px-8 py-3.5 rounded-full bg-white/[0.02] border border-white/10 text-xs font-bold uppercase tracking-[0.2em] text-gray-300 hover:text-white hover:border-purple-500/50 hover:bg-purple-500/5 transition-all duration-500"
-            >
-              Open menu
-              <FaArrowRight className="text-purple-400 transition-transform group-hover/cta:translate-x-1.5" size={10} />
-            </Link>
-          </div>
-
-          {/* Grid with Staggered Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { icon: <FaUtensils />, name: "Main Course", cat: "Indian", desc: "Curated fine dining experiences", delay: 0 },
-              { icon: <FaPizzaSlice />, name: "Fast Track", cat: "Pizza", desc: "Quick bites with urban flavors", delay: 0.1 },
-              { icon: <FaCocktail />, name: "Mixology", cat: "Liquor", desc: "Premium cocktails & spirits", delay: 0.2 },
-              { icon: <FaIceCream />, name: "Patisserie", cat: "Desserts", delay: 0.3, desc: "Artisan desserts & sweet finales" },
-            ].map((item, i) => (
+          {/* Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {services.map((service, i) => (
               <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                key={service.name}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
                 viewport={{ once: true }}
-                transition={{ delay: item.delay, duration: 0.5 }}
               >
-                <Link
-                  href={`/food?cat=${item.cat}`}
-                  className="group relative flex flex-col h-full p-8 rounded-[2rem] border border-white/5 bg-gradient-to-b from-white/[0.03] to-transparent hover:from-purple-500/10 hover:border-purple-500/30 transition-all duration-700 overflow-hidden"
-                >
-                  {/* Top "Sparkle" Glow */}
-                  <div className="absolute -top-10 -right-10 w-24 h-24 bg-purple-500/10 blur-2xl group-hover:bg-purple-500/30 transition-colors duration-700" />
+                <Link href={service.href}>
+                  <div className="group relative p-[1px] rounded-2xl bg-gradient-to-b from-white/10 to-white/5 hover:from-indigo-500/40 hover:to-purple-500/40 transition">
 
-                  <div className="relative z-10">
-                    {/* Icon Logic: Larger, floating feel */}
-                    <div className="mb-12 inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 text-2xl text-purple-300 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white group-hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-500">
-                      {item.icon}
+                    {/* Glass Card */}
+                    <div className="relative h-full rounded-2xl bg-white/[0.03] backdrop-blur-xl p-6 border border-white/10 overflow-hidden">
+
+                      {/* Hover Glow */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-indigo-500/10 to-purple-500/10" />
+
+                      {/* Icon */}
+                      <div className="text-3xl text-indigo-400 mb-4 group-hover:scale-110 transition">
+                        {service.icon}
+                      </div>
+
+                      {/* Title */}
+                      <h4 className="text-lg font-semibold text-white mb-2">
+                        {service.name}
+                      </h4>
+
+                      {/* Description */}
+                      <p className="text-sm text-gray-400 leading-relaxed">
+                        {service.desc}
+                      </p>
+
+                      {/* Arrow */}
+                      <div className="mt-6 text-indigo-400 text-sm flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                        Explore →
+                      </div>
+
+                      {/* Shine Effect */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-[linear-gradient(120deg,transparent,white,transparent)] translate-x-[-100%] group-hover:translate-x-[100%] transition duration-1000" />
                     </div>
-
-                    <h4 className="text-lg font-bold text-white mb-2 group-hover:text-purple-200 transition-colors">
-                      {item.name}
-                    </h4>
-                    <p className="text-xs text-gray-500 leading-relaxed font-medium group-hover:text-gray-400 transition-colors">
-                      {item.desc}
-                    </p>
-                  </div>
-
-                  {/* Subtle "Arrow" hint that appears on hover */}
-                  <div className="mt-8 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-purple-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
-                    Taste Now <FaArrowRight size={8} />
                   </div>
                 </Link>
               </motion.div>
@@ -649,189 +531,363 @@ export default function Home() {
         </div>
       </section>
 
-      {/* DISCOVERY ECOSYSTEM SECTION */}
-      <section className="py-24 border-t border-white/5 bg-[#050505] relative overflow-hidden group/discovery">
-        {/* 1. Sophisticated Ambient Lighting */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-500/5 blur-[140px] rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+      {/* <EcosystemSection services={services} /> */}
+
+      {/* GOURMET ECOSYSTEM SECTION */}
+      <section className="relative py-32 bg-[#050505] overflow-hidden">
+
+        {/* 🌌 Luxury Ambient Background */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(168,85,247,0.12),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(236,72,153,0.10),transparent_40%)]" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
-            <div className="max-w-2xl">
-              {/* Editorial Label */}
+
+          {/* 🧠 Header */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 gap-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <p className="text-xs tracking-[0.45em] text-purple-400 uppercase mb-5">
+                Culinary Experience
+              </p>
+
+              <h2 className="text-5xl md:text-6xl font-semibold text-white leading-tight">
+                Taste the Journey <br />
+                <span className="bg-gradient-to-r from-purple-400 to-fuchsia-500 text-transparent bg-clip-text">
+                  Not Just the Food
+                </span>
+              </h2>
+
+              <p className="text-gray-400 mt-6 max-w-lg">
+                From gourmet dining to quick indulgences, experience a unified
+                culinary ecosystem crafted for travelers who expect more than just meals.
+              </p>
+            </motion.div>
+
+            {/* CTA */}
+            <Link
+              href="/food"
+              className="group flex items-center gap-3 px-8 py-4 rounded-full bg-white/[0.03] border border-white/10 text-xs uppercase tracking-[0.25em] text-gray-300 hover:text-white hover:border-purple-500/50 hover:bg-purple-500/10 transition-all duration-500"
+            >
+              Explore Dining
+              <FaArrowRight className="text-purple-400 group-hover:translate-x-1.5 transition" size={10} />
+            </Link>
+          </div>
+
+          {/* 🍽️ Premium Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {items.map((item, i) => (
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                key={item.name}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: item.delay, duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                <Link href={`/food?cat=${item.cat}`}>
+                  <div className="group relative p-[1px] rounded-[2rem] bg-gradient-to-b from-white/10 to-white/5 hover:from-purple-500/40 hover:to-fuchsia-500/40 transition-all duration-500">
+
+                    {/* Glass Layer */}
+                    <div className="relative h-full rounded-[2rem] bg-white/[0.03] backdrop-blur-xl border border-white/10 p-8 overflow-hidden">
+
+                      {/* ✨ Hover Glow */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-purple-500/10 to-fuchsia-500/10" />
+
+                      {/* 💡 Floating Icon */}
+                      <div className="mb-14 w-16 h-16 flex items-center justify-center rounded-2xl bg-white/[0.04] border border-white/10 text-2xl text-purple-300 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white group-hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] transition-all duration-500">
+                        {item.icon}
+                      </div>
+
+                      {/* 📝 Content */}
+                      <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-purple-200 transition">
+                        {item.name}
+                      </h3>
+
+                      <p className="text-sm text-gray-400 leading-relaxed group-hover:text-gray-300 transition">
+                        {item.desc}
+                      </p>
+
+                      {/* ➡️ Hover Action */}
+                      <div className="mt-10 flex items-center gap-2 text-xs tracking-wider uppercase text-purple-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                        Discover <FaArrowRight size={10} />
+                      </div>
+
+                      {/* 🌟 Shine Sweep */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-[linear-gradient(120deg,transparent,white,transparent)] translate-x-[-100%] group-hover:translate-x-[100%] transition duration-1000" />
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* 🔥 Bottom Tagline (NEW – makes it feel premium product) */}
+          <div className="mt-24 text-center">
+            <p className="text-sm text-gray-500 tracking-wide">
+              Designed for modern travelers • Powered by real-time culinary intelligence
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* <DiscoveryServiceCard /> */}
+      
+      {/* DISCOVERY ECOSYSTEM SECTION */}
+      <section className="relative py-32 bg-[#050505] overflow-hidden">
+
+        {/* 🌌 Multi-layer Ambient Background */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(99,102,241,0.15),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(168,85,247,0.12),transparent_40%)]" />
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+
+          {/* 🧠 HEADER */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 gap-10">
+
+            <div className="max-w-2xl">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
                 className="flex items-center gap-4 mb-6"
               >
-                <h2 className="text-xs font-black tracking-[0.5em] text-indigo-500 uppercase">
+                <span className="text-xs tracking-[0.5em] text-indigo-400 uppercase">
                   Discovery
-                </h2>
-                <div className="h-px w-12 bg-indigo-500/30" />
+                </span>
+                <div className="h-px w-14 bg-indigo-400/30" />
               </motion.div>
 
-              {/* Title & Subtext */}
-              <h3 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6">
-                Curated <span className="text-white/40 ">Experiences</span>
-              </h3>
-              <p className="text-gray-500 text-lg leading-relaxed font-medium">
-                Discover wellness, adventure, and cultural rituals
-                <span className="text-gray-300"> tailored precisely to your journey.</span>
+              <h2 className="text-5xl md:text-6xl font-semibold text-white leading-tight">
+                Curated Experiences <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
+                  Powered by Intelligence
+                </span>
+              </h2>
+
+              <p className="text-gray-400 mt-6 max-w-lg">
+                A dynamic discovery engine that adapts to your journey — blending wellness,
+                culture, food, and adventure into one seamless experience layer.
               </p>
             </div>
 
             <Link
               href="/discovery"
-              className="group/cta flex items-center gap-4 px-8 py-4 rounded-full bg-white/[0.03] border border-white/10 text-xs uppercase tracking-widest text-gray-300 hover:text-white hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all duration-500"
+              className="group flex items-center gap-3 px-8 py-4 rounded-full border border-white/10 bg-white/[0.03] text-xs uppercase tracking-[0.25em] text-gray-300 hover:text-white hover:border-indigo-500/50 hover:bg-indigo-500/10 transition-all duration-500"
             >
-              View all experiences
-              <FaArrowRight className="text-indigo-400 transition-transform group-hover/cta:translate-x-2" />
+              Explore All
+              <FaArrowRight
+                className="text-indigo-400 group-hover:translate-x-1.5 transition"
+                size={10}
+              />
             </Link>
           </div>
 
-          {/* 2. Optimized Grid with Staggered Entrance */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-white/5 rounded-3xl overflow-hidden">
-            {[
-              { num: "01", name: "Wellness", desc: "Therapeutic rituals & spa experiences", cat: "Wellness" },
-              { num: "02", name: "Adventures", desc: "Outdoor and high-altitude activities", cat: "Adventure" },
-              { num: "03", name: "Culinary", desc: "Private dining & chef-led sessions", cat: "Culinary" },
-              { num: "04", name: "Local Arts", desc: "Exclusive galleries & cultural access", cat: "Discovery" },
-            ].map((item, i) => (
+          {/* 🔥 FEATURED EXPERIENCE */}
+          <div className="mb-16">
+            <div className="relative rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-10 overflow-hidden group">
+
+              {/* Glow */}
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition duration-500" />
+
+              <div className="relative z-10 flex flex-col md:flex-row justify-between gap-10">
+                <div>
+                  <p className="text-xs tracking-widest text-indigo-400 mb-4">
+                    Featured Experience
+                  </p>
+                  <h3 className="text-3xl md:text-4xl font-semibold text-white mb-4">
+                    Himalayan Wellness Retreat
+                  </h3>
+                  <p className="text-gray-400 max-w-md">
+                    A 3-day guided experience combining meditation, spa therapy, and mountain exploration.
+                  </p>
+                </div>
+
+                <div className="flex items-center">
+                  <button className="group flex items-center gap-2 text-indigo-400 text-sm">
+                    Discover Now
+                    <FaArrowRight className="group-hover:translate-x-1 transition" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 🧊 GRID */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {experiences.map((exp, i) => (
               <motion.div
-                key={i}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                key={exp.name}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
               >
-                <Link
-                  href={`/discovery?cat=${item.cat}`}
-                  className="group relative flex flex-col h-[350px] p-10 bg-[#050505] hover:bg-indigo-500/[0.02] transition-colors duration-700"
-                >
-                  {/* Hover Accent Line */}
-                  <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left" />
+                <Link href={`/discovery?cat=${exp.cat}`}>
+                  <div className="group relative h-[320px] p-[1px] rounded-2xl bg-gradient-to-b from-white/10 to-white/5 hover:from-indigo-500/40 hover:to-purple-500/40 transition">
 
-                  {/* Vertical Numbering */}
-                  <span className="text-5xl font-serif italic text-white/[0.03] group-hover:text-indigo-500/10 transition-colors duration-700 absolute top-8 right-8">
-                    {item.num}
-                  </span>
+                    {/* Glass */}
+                    <div className="relative h-full rounded-2xl bg-[#050505] border border-white/10 p-8 overflow-hidden">
 
-                  <div className="mt-auto relative z-10">
-                    <h4 className="text-2xl font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors">
-                      {item.name}
-                    </h4>
-                    <p className="text-sm text-gray-500 leading-relaxed font-medium group-hover:text-gray-300 transition-colors">
-                      {item.desc}
-                    </p>
+                      {/* Glow */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 transition duration-500" />
 
-                    {/* Animated Arrow Reveal */}
-                    <div className="mt-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
-                      Explore <FaArrowRight size={10} />
+                      {/* Number */}
+                      <span className="absolute top-6 right-6 text-5xl font-serif italic text-white/[0.04] group-hover:text-indigo-400/10 transition">
+                        {exp.num}
+                      </span>
+
+                      <div className="relative z-10 mt-auto flex flex-col justify-end h-full">
+                        <h4 className="text-xl font-semibold text-white mb-2 group-hover:text-indigo-300 transition">
+                          {exp.name}
+                        </h4>
+
+                        <p className="text-sm text-gray-400 group-hover:text-gray-300 transition">
+                          {exp.desc}
+                        </p>
+
+                        <div className="mt-6 flex items-center gap-2 text-xs uppercase tracking-wider text-indigo-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                          Explore <FaArrowRight size={10} />
+                        </div>
+                      </div>
+
+                      {/* Shine */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-[linear-gradient(120deg,transparent,white,transparent)] translate-x-[-100%] group-hover:translate-x-[100%] transition duration-1000" />
                     </div>
                   </div>
                 </Link>
               </motion.div>
             ))}
+          </div>
+
+          {/* 🧠 Bottom Layer */}
+          <div className="mt-24 text-center">
+            <p className="text-gray-500 text-sm tracking-wide">
+              AI-curated journeys • Personalized in real-time • Designed for explorers
+            </p>
           </div>
         </div>
       </section>
 
       {/* ENTERTAINMENT SECTION */}
       <section className="py-24 border-t border-white/5 bg-[#030303] relative overflow-hidden">
-        {/* subtle glow */}
+
+        {/* Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-[300px] bg-red-500/5 blur-[120px]" />
+
         <div className="max-w-7xl mx-auto px-6 relative z-10">
+
           {/* HEADER */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
             <div>
-              <h2 className="text-xs font-semibold tracking-[0.3em] text-red-400 uppercase mb-3">
+              <h2 className="text-xs tracking-[0.3em] text-red-400 uppercase mb-3">
                 Entertainment
               </h2>
-              <h3 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
+
+              <h3 className="text-4xl md:text-5xl font-semibold text-white">
                 Streaming Hub
               </h3>
+
               <p className="text-sm text-gray-400 mt-3 max-w-md">
                 Access curated movies, series, and live content directly from your stay.
               </p>
             </div>
-            {/* CTA */}
+
             <Link
               href="/entertainment"
-              className="group inline-flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition"
+              className="group flex items-center gap-2 text-sm text-gray-300 hover:text-white"
             >
               View all
-              <span className="text-red-400 transition-transform group-hover:translate-x-1">
+              <span className="text-red-400 group-hover:translate-x-1 transition">
                 →
               </span>
             </Link>
           </div>
+
           {/* ROWS */}
-          <div className="space-y-10">
-            <EntertainmentRow title="Trending Now" />
-            <EntertainmentRow title="Action Picks" />
-            <EntertainmentRow title="Comedy Specials" />
-            <EntertainmentRow title="Recommended For You" />
+          <div className="space-y-12">
+            {/* <EntertainmentRow title="Trending Now" items={demoData} /> */}
+            <EntertainmentRow title="Action Picks" items={demoData} />
+            <EntertainmentRow title="Comedy Specials" items={demoData} />
+            {/* <EntertainmentRow title="Recommended For You" items={demoData} /> */}
           </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="relative py-24 px-8 border-t border-white/[0.03] bg-[#020202] overflow-hidden">
+      <footer className="relative bg-[#020202] text-white border-t border-white/[0.05]">
 
-        {/* 🌌 Fading Backdrop Glow */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-teal-500/[0.02] blur-[120px] rounded-full pointer-events-none" />
+        {/* 🌌 Subtle FAANG-style Background */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[250px] bg-teal-500/[0.04] blur-[120px]" />
+        </div>
 
-        <div className="max-w-[1400px] mx-auto relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-left">
+        <div className="relative z-10 max-w-[1200px] mx-auto px-6 py-20">
 
-            {/* BRAND COLUMN */}
-            <div className="lg:col-span-2">
-              <h3 className="text-2xl font-light tracking-[0.3em] text-white uppercase mb-6">
-                Yatri<span className="font-serif italic text-teal-400 lowercase tracking-normal">hub</span>
+          {/* 🔝 GRID */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
+
+            {/* 🌍 BRAND */}
+            <div className="md:col-span-2">
+              <h3 className="text-xl font-semibold tracking-wide mb-4">
+                Yatri
+                <span className="text-teal-400 font-serif italic lowercase">
+                  hub
+                </span>
               </h3>
-              <p className="text-[10px] text-zinc-500 uppercase tracking-[0.4em] leading-relaxed max-w-sm">
-                Architecting the next-gen unified travel ecosystem.
-                Refining the art of celestial transit.
+
+              <p className="text-sm text-zinc-400 max-w-sm leading-relaxed">
+                A unified platform connecting travel, hospitality, dining,
+                and experiences into one seamless ecosystem.
               </p>
             </div>
 
-            {/* NAVIGATION LINKS */}
-            <div className="space-y-4">
-              <h4 className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.5em] mb-6">Network</h4>
-              <div className="flex flex-col gap-3 text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">
-                <span className="hover:text-teal-400 cursor-pointer transition-colors">About Alpha</span>
-                <span className="hover:text-teal-400 cursor-pointer transition-colors">Career Pathways</span>
-                <span className="hover:text-teal-400 cursor-pointer transition-colors">Partner Access</span>
-              </div>
-            </div>
+            {/* 🧭 PLATFORM */}
+            <FooterColumn
+              title="Platform"
+              links={[
+                { name: "Travel", href: "/travel" },
+                { name: "Rooms", href: "/rooms" },
+                { name: "Dining", href: "/food" },
+                { name: "Entertainment", href: "/entertainment" },
+              ]}
+            />
 
-            {/* LEGAL / STATUS */}
-            <div className="space-y-4">
-              <h4 className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.5em] mb-6">Security</h4>
-              <div className="flex flex-col gap-3 text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">
-                <span className="hover:text-teal-400 cursor-pointer transition-colors">Privacy Protocol</span>
-                <span className="hover:text-teal-400 cursor-pointer transition-colors">Terms of Transit</span>
-                <div className="flex items-center gap-2 pt-2">
-                  <span className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse shadow-[0_0_8px_#2dd4bf]" />
-                  <span className="text-[8px] text-zinc-600 tracking-[0.3em]">SYSTEMS OPERATIONAL</span>
-                </div>
-              </div>
-            </div>
+            {/* 🔗 COMPANY */}
+            <FooterColumn
+              title="Company"
+              links={[
+                { name: "About", href: "/about" },
+                { name: "Careers", href: "/careers" },
+                { name: "Partners", href: "/partners" },
+                { name: "Press", href: "/press" },
+              ]}
+            />
+
           </div>
 
-          {/* BOTTOM BAR */}
-          <div className="mt-24 pt-8 border-t border-white/[0.03] flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-[8px] text-zinc-800 font-black uppercase tracking-[1em]">
-              © 2026 YatriHub Global Concierge
+          {/* ⚡ DIVIDER */}
+          <div className="mt-16 border-t border-white/[0.05] pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+
+            <p className="text-xs text-zinc-500">
+              © 2026 YatriHub. All rights reserved.
             </p>
 
-            <div className="flex items-center gap-8">
-              <div className="h-px w-12 bg-zinc-900 hidden md:block" />
-              <p className="text-[8px] text-zinc-800 uppercase tracking-[0.5em] italic">
-                Designed for the modern voyager
-              </p>
+            <div className="flex gap-6 text-xs text-zinc-500">
+              <Link href="/privacy" className="hover:text-white transition">
+                Privacy
+              </Link>
+              <Link href="/terms" className="hover:text-white transition">
+                Terms
+              </Link>
+              <Link href="/contact" className="hover:text-white transition">
+                Contact
+              </Link>
             </div>
+
           </div>
         </div>
       </footer>
@@ -839,7 +895,34 @@ export default function Home() {
   );
 }
 
-// --- SUB-COMPONENTS ---
+function FooterColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: { name: string; href: string }[];
+}) {
+  return (
+    <div className="space-y-4">
+      <h4 className="text-[10px] font-semibold text-zinc-500 uppercase tracking-[0.3em] mb-4">
+        {title}
+      </h4>
+
+      <ul className="space-y-3">
+        {links.map((link) => (
+          <li key={link.name}>
+            <Link
+              href={link.href}
+              className="text-[12px] text-zinc-400 hover:text-white transition-colors duration-300"
+            >
+              {link.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 function BentoBox({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
@@ -849,130 +932,95 @@ function BentoBox({ children, className }: { children: React.ReactNode; classNam
   );
 }
 
-function EntertainmentRow({ title }: { title: string }) {
-  const items = new Array(10).fill(0);
+function EntertainmentRow({
+  title,
+  items,
+}: {
+  title: string;
+  items: ContentItem[];
+}) {
+  const featured = items.find((i) => i.featured) || items[0];
 
   return (
-    <div className="mb-20">
+    <div>
 
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
-        <h4 className="text-lg font-semibold text-white tracking-tight">
+        <h4 className="text-lg font-semibold text-white">
           {title}
         </h4>
 
-        <span className="text-xs text-gray-400 hover:text-white transition cursor-pointer">
+        <span className="text-xs text-gray-400 hover:text-white cursor-pointer">
           Explore →
         </span>
       </div>
 
-      <div className="flex gap-8 items-start">
+      <div className="flex gap-8">
 
-        {/* 🔥 FEATURED CARD */}
+        {/* 🔥 FEATURED */}
         <motion.div
           whileHover={{ scale: 1.02 }}
-          className="relative min-w-[380px] h-[280px] rounded-2xl overflow-hidden group cursor-pointer"
+          className="relative min-w-[380px] h-[280px] rounded-2xl overflow-hidden group"
         >
+          <div
+            className="absolute inset-0 bg-cover bg-center scale-105 group-hover:scale-110 transition"
+            style={{ backgroundImage: `url(${featured.image})` }}
+          />
 
-          {/* IMAGE */}
-          <div className="absolute inset-0 bg-[url('/poster.jpg')] bg-cover bg-center scale-105 group-hover:scale-110 transition duration-700" />
-
-          {/* NETFLIX CINEMATIC OVERLAY */}
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
 
-          {/* TOP BADGE */}
-          <div className="absolute top-4 left-4 z-10 px-2 py-1 bg-red-600 text-[10px] font-bold rounded">
-            Trending
+          <div className="absolute top-4 left-4 bg-red-600 text-[10px] px-2 py-1 rounded">
+            Featured
           </div>
 
-          {/* CONTENT */}
           <div className="relative z-10 p-6 flex flex-col justify-end h-full max-w-[75%]">
-
-            <h3 className="text-2xl font-bold text-white mb-2">
-              Inception
+            <h3 className="text-2xl font-bold text-white">
+              {featured.title}
             </h3>
 
-            <p className="text-xs text-gray-300 mb-3">
-              Sci-Fi • 2010 • 2h 28m
+            <p className="text-xs text-gray-300">
+              {featured.genre} • {featured.year} {featured.duration && `• ${featured.duration}`}
             </p>
 
-            <p className="text-sm text-gray-300 mb-4 line-clamp-2">
-              A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.
-            </p>
-
-            <div className="flex gap-3">
-              <button className="bg-white text-black px-4 py-2 rounded-full text-xs font-semibold hover:scale-105 transition">
+            <div className="flex gap-3 mt-4">
+              <button className="bg-white text-black px-4 py-2 rounded-full text-xs">
                 ▶ Play
               </button>
 
-              <button className="bg-white/10 backdrop-blur px-4 py-2 rounded-full text-xs text-white hover:bg-white/20 transition">
+              <button className="bg-white/10 px-4 py-2 rounded-full text-xs text-white">
                 + Watchlist
               </button>
             </div>
           </div>
-
-          {/* BOTTOM FADE */}
-          <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black to-transparent" />
         </motion.div>
 
-
-        {/* 🎬 SCROLL ROW */}
+        {/* 🎬 SCROLL */}
         <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-
-          {items.map((_, i) => (
+          {items.map((item, i) => (
             <motion.div
-              key={i}
-              whileHover={{ scale: 1.12, y: -8, zIndex: 20 }}
-              transition={{ type: "spring", stiffness: 220, damping: 18 }}
-              className="relative min-w-[170px] h-[250px] rounded-xl overflow-hidden border border-white/10 bg-zinc-900 group cursor-pointer"
+              key={item.id}
+              whileHover={{ scale: 1.12, y: -8 }}
+              className="relative min-w-[170px] h-[250px] rounded-xl overflow-hidden border border-white/10 group"
             >
+              <div
+                className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition"
+                style={{ backgroundImage: `url(${item.image})` }}
+              />
 
-              {/* IMAGE */}
-              <div className="absolute inset-0 bg-[url('/poster.jpg')] bg-cover bg-center transition duration-500 group-hover:scale-110" />
-
-              {/* OVERLAY */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
-              {/* RANK BADGE */}
-              <div className="absolute top-2 left-2 text-xs font-bold text-white/80">
-                #{i + 1}
-              </div>
-
-              {/* CONTENT */}
               <div className="absolute bottom-3 left-3 right-3">
-
-                <p className="text-sm font-semibold text-white leading-tight">
-                  Inception
+                <p className="text-sm font-semibold text-white">
+                  {item.title}
                 </p>
 
-                <p className="text-[10px] text-gray-400 mt-1">
-                  Sci-Fi • 2010
+                <p className="text-[10px] text-gray-400">
+                  {item.genre} • {item.year}
                 </p>
-
               </div>
-
-              {/* HOVER CONTROLS */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-
-                <div className="flex gap-2">
-
-                  <div className="bg-white text-black px-3 py-1.5 rounded-full text-xs font-semibold">
-                    ▶
-                  </div>
-
-                  <div className="bg-white/10 backdrop-blur px-3 py-1.5 rounded-full text-xs text-white">
-                    +
-                  </div>
-
-                </div>
-
-              </div>
-
             </motion.div>
           ))}
-
         </div>
-
       </div>
     </div>
   );

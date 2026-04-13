@@ -1,186 +1,285 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  MotionValue,
+} from 'framer-motion';
 import Link from 'next/link';
 
+/* =========================
+   🔹 TYPES
+========================= */
+type LoginForm = {
+  email: string;
+  password: string;
+};
+
+type FieldConfig = {
+  label: string;
+  key: keyof LoginForm;
+  type: string;
+};
+
+type InputProps = {
+  label: string;
+  type: string;
+  value: string;
+  error?: string;
+  onChange: (val: string) => void;
+};
+
+type BackgroundProps = {
+  yMain: MotionValue<number>;
+  rotate: MotionValue<number>;
+};
+
+/* =========================
+   🔹 CONFIG
+========================= */
+const fields: FieldConfig[] = [
+  { label: 'Email Address', key: 'email', type: 'email' },
+  { label: 'Password', key: 'password', type: 'password' },
+];
+
+/* =========================
+   🔹 VALIDATION ENGINE
+========================= */
+const validateForm = (form: LoginForm) => {
+  const errors: Partial<LoginForm> = {};
+
+  if (!form.email) errors.email = 'Email is required';
+  else if (!/\S+@\S+\.\S+/.test(form.email))
+    errors.email = 'Invalid email format';
+
+  if (!form.password) errors.password = 'Password is required';
+  else if (form.password.length < 6)
+    errors.password = 'Minimum 6 characters required';
+
+  return errors;
+};
+
+/* =========================
+   🔹 MAIN COMPONENT
+========================= */
 export default function LoginPage() {
   const router = useRouter();
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // Parallax logic for the SVG background
+  /* 🌌 PARALLAX */
   const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, -150]);
-  const rotate = useTransform(scrollY, [0, 500], [0, 25]);
+  const yMain = useTransform(scrollY, [0, 500], [0, -120]);
+  const rotate = useTransform(scrollY, [0, 500], [0, 20]);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  /* 🧠 STATE */
+  const [form, setForm] = useState<LoginForm>({
+    email: '',
+    password: '',
+  });
+
+  const [errors, setErrors] = useState<Partial<LoginForm>>({});
   const [loading, setLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  /* =========================
+     🔹 HANDLERS
+  ========================= */
+  const handleChange = useCallback(
+    (key: keyof LoginForm, value: string) => {
+      setForm((prev) => ({ ...prev, [key]: value }));
+
+      // live validation
+      setErrors((prev) => ({ ...prev, [key]: '' }));
+    },
+    []
+  );
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('CREDENTIALS REQUIRED');
-      return;
-    }
+
+    const validationErrors = validateForm(form);
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) return;
+
     setLoading(true);
-    setError('');
-    setTimeout(() => {
-      setLoading(false);
-      setIsSuccess(true);
+
+    try {
+      // 🔌 Replace with real API
+      await new Promise((res) => setTimeout(res, 1200));
+
+      setSuccess(true);
+
       setTimeout(() => router.push('/dashboard'), 800);
-    }, 1800);
+    } catch {
+      setErrors({ email: 'Authentication failed' });
+    } finally {
+      setLoading(false);
+    }
   };
 
+  /* =========================
+     🔹 UI
+  ========================= */
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-[#020202] text-zinc-400 flex flex-col items-center justify-center p-6 selection:bg-teal-500/30 overflow-hidden cursor-default"
+      className="min-h-screen bg-[#020202] flex items-center justify-center px-6 text-zinc-400"
     >
-
-      {/* ATMOSPHERIC DEPTH: COMBINED SVG LAYER */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        {/* The Grid Overlay */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5" strokeOpacity="0.2" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-
-        {/* The Petal SVG (Imported from Hero) */}
-        <motion.svg
-          style={{ y: y1, rotate }}
-          viewBox="0 0 800 800"
-          className="absolute -right-40 -top-40 md:-right-20 md:-top-20 w-[800px] h-[800px] md:w-[1000px] md:h-[1000px]"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <linearGradient id="line-gradient" x1="400" y1="0" x2="400" y2="800" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#2dd4bf" stopOpacity="0" />
-              <stop offset="0.5" stopColor="#2dd4bf" stopOpacity="1" />
-              <stop offset="1" stopColor="#2dd4bf" stopOpacity="0" />
-            </linearGradient>
-            <radialGradient id="glow-radial" cx="400" cy="400" r="300" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#2dd4bf" stopOpacity="0.15" />
-              <stop offset="1" stopColor="#2dd4bf" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          <circle cx="400" cy="400" r="300" fill="url(#glow-radial)" />
-          <motion.path
-            d="M400 50 C 100 50, 50 250, 400 750 C 750 300, 700 50, 400 50"
-            stroke="url(#line-gradient)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.4 }}
-            transition={{ duration: 4, ease: "easeInOut", repeat: Infinity }}
-          />
-
-          <motion.path
-            d="M400 100 C 150 100, 100 300, 400 700 C 700 300, 650 100, 400 100"
-            stroke="#2dd4bf"
-            strokeWidth="0.5"
-            strokeDasharray="10 20"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.1 }}
-            transition={{ duration: 6, ease: "linear", repeat: Infinity }}
-          />
-        </motion.svg>
-
-        {/* Grain Texture */}
-        <div className="absolute inset-0 opacity-[0.02] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-      </div>
+      <Background yMain={yMain} rotate={rotate} />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 3.2, ease: [0.5, 1, 0.6, 1] }}
-        className="relative z-10 w-full max-w-[340px]"
+        transition={{ duration: 0.6 }}
+        className="relative z-10 w-full max-w-sm"
       >
-        {/* BRANDING */}
-        <header className="mb-16 text-center">
-          <motion.h1
-            initial={{ letterSpacing: "0.1em" }}
-            animate={{ letterSpacing: "0.25em" }}
-            className="text-4xl font-light text-white uppercase leading-none"
-          >
-            Yatri<span className="text-teal-400 font-serif italic lowercase tracking-normal">hub</span>
-          </motion.h1>
-          <div className="flex items-center justify-center gap-3 mt-4">
-            <div className="h-px w-6 bg-zinc-800" />
-            <p className="text-[8px] tracking-[0.5em] text-zinc-500 uppercase font-black">Aetherial Transit</p>
-            <div className="h-px w-6 bg-zinc-800" />
-          </div>
-        </header>
+        <Header />
 
-        {/* FORM */}
-        <form onSubmit={handleLogin} className="space-y-10">
-          <AnimatePresence mode="wait">
-            {error && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                className="flex items-center justify-center gap-2 py-2 border border-teal-500/20 bg-teal-500/5 rounded"
-              >
-                <p className="text-[9px] text-teal-500 tracking-[0.2em] uppercase font-bold">{error}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <div className="space-y-8">
-            <div className="group relative">
-              <label className="text-[8px] font-black tracking-[0.3em] text-zinc-600 group-focus-within:text-teal-400 transition-colors uppercase">Identity</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="EMAIL ADDRESS"
-                className="w-full bg-transparent border-b border-zinc-800 py-3 text-xs tracking-[0.2em] text-white outline-none transition-all focus:border-teal-500 caret-teal-500 placeholder:text-zinc-800 font-medium lowercase"
+        <form onSubmit={handleLogin} className="space-y-8" noValidate>
+          {/* Inputs */}
+          <div className="space-y-6">
+            {fields.map((field) => (
+              <InputField
+                key={field.key}
+                label={field.label}
+                type={field.type}
+                value={form[field.key]}
+                error={errors[field.key]}
+                onChange={(val) => handleChange(field.key, val)}
               />
-            </div>
-
-            <div className="group relative">
-              <div className="flex justify-between items-center">
-                <label className="text-[8px] font-black tracking-[0.3em] text-zinc-600 group-focus-within:text-teal-400 transition-colors uppercase">Security</label>
-                <Link href="#" className="text-[8px] text-red-400 hover:text-teal-500 transition-colors uppercase tracking-normal">Forgot?</Link>
-              </div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="ACCESS KEY"
-                className="w-full bg-transparent border-b border-zinc-800 py-3 text-xs tracking-[0.2em] text-white outline-none transition-all focus:border-teal-500 caret-teal-500 placeholder:text-zinc-800 font-medium"
-              />
-            </div>
+            ))}
           </div>
 
-          <button
-            type="submit"
-            disabled={loading || isSuccess}
-            className="w-full relative group mt-4 overflow-hidden bg-white text-black py-4 rounded-full text-[10px] font-black uppercase tracking-[0.4em] transition-all hover:text-teal-400
-    hover:border-teal-500/30
-    hover:shadow-[inset_0_0_30px_rgba(45,112,101,0.3)] active:scale-[0.98] disabled:bg-zinc-800 disabled:text-zinc-500"
-          >
-            <span className="relative z-10">
-              {isSuccess ? 'Access Granted' : loading ? 'Verifying Identity...' : 'Initiate Transit'}
-            </span>
-            <motion.div className="absolute inset-0 bg-teal-400" initial={{ y: "100%" }} whileHover={{ y: 0 }} />
-          </button>
+          {/* Submit */}
+          <SubmitButton loading={loading} success={success} />
         </form>
 
-        <footer className="mt-20 text-center flex flex-col items-center gap-8">
-          <Link href="/register" className="text-[10px] tracking-[0.3em] uppercase font-bold text-zinc-500 hover:text-white transition-all underline underline-offset-8 decoration-zinc-800 hover:decoration-teal-500">
-            Enroll in Network
-          </Link>
-          <div className="h-10 w-px bg-gradient-to-b from-zinc-800 to-transparent" />
-          <p className="text-[7px] text-zinc-800 tracking-[0.8em] uppercase whitespace-nowrap">Global Concierge &copy; 2026</p>
-        </footer>
+        <Footer />
       </motion.div>
+    </div>
+  );
+}
+
+/* =========================
+   🔹 COMPONENTS
+========================= */
+
+function Header() {
+  return (
+    <header className="mb-12 text-center">
+      <h1 className="text-4xl font-light text-white tracking-[0.25em] uppercase">
+        Yatri
+        <span className="text-teal-400 italic lowercase tracking-normal">
+          hub
+        </span>
+      </h1>
+
+      <p className="mt-4 text-[10px] tracking-[0.4em] text-zinc-500 uppercase">
+        Secure Access Portal
+      </p>
+    </header>
+  );
+}
+
+/* 🔹 Input */
+function InputField({ label, type, value, error, onChange }: InputProps) {
+  return (
+    <div className="group">
+      <label className="text-[9px] uppercase tracking-widest text-zinc-600 group-focus-within:text-teal-400 transition">
+        {label}
+      </label>
+
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={label.toUpperCase()}
+        aria-invalid={!!error}
+        aria-describedby={`${label}-error`}
+        className={`w-full bg-transparent border-b py-3 text-sm text-white outline-none transition
+          ${error ? 'border-red-500' : 'border-zinc-800 focus:border-teal-500'}
+        `}
+      />
+
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            id={`${label}-error`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="text-[10px] text-red-400 mt-1"
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* 🔹 Submit */
+function SubmitButton({
+  loading,
+  success,
+}: {
+  loading: boolean;
+  success: boolean;
+}) {
+  return (
+    <button
+      type="submit"
+      disabled={loading || success}
+      className="w-full py-4 rounded-full bg-white text-black text-sm font-semibold tracking-widest transition hover:scale-[1.02] disabled:opacity-50"
+    >
+      {success
+        ? 'Access Granted'
+        : loading
+        ? 'Verifying...'
+        : 'Login'}
+    </button>
+  );
+}
+
+/* 🔹 Footer */
+function Footer() {
+  return (
+    <div className="mt-16 text-center space-y-4">
+      <Link
+        href="/register"
+        className="text-xs text-zinc-500 hover:text-white transition"
+      >
+        Create new account
+      </Link>
+
+      <p className="text-[10px] text-zinc-700">
+        © 2026 YatriHub
+      </p>
+    </div>
+  );
+}
+
+/* =========================
+   🌌 BACKGROUND
+========================= */
+
+function Background({ yMain, rotate }: BackgroundProps) {
+  return (
+    <div className="fixed inset-0 pointer-events-none">
+
+      {/* Grid */}
+      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] bg-[size:40px_40px]" />
+
+      {/* Glow */}
+      <motion.div
+        style={{ y: yMain, rotate }}
+        className="absolute -right-40 top-0 w-[600px] h-[600px] bg-teal-500/10 blur-[120px] rounded-full"
+      />
     </div>
   );
 }
