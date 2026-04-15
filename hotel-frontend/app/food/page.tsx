@@ -322,22 +322,8 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import RegistryConsole from "../food/admin";
 import {
-  FaStar, FaCheckCircle, FaChartLine, FaServer,
-  FaTerminal, FaShieldAlt, FaBoxOpen
-} from "react-icons/fa";
-import {
-  FiPlus, FiMinus, FiShoppingBag, FiX,
-  FiCompass, FiActivity, FiLayers
+  FiPlus, FiMinus, FiShoppingBag, FiX, FiCompass
 } from "react-icons/fi";
-
-import {
-  FiClock, FiCheckCircle, FiAlertCircle
-} from "react-icons/fi";
-import {
-  FaUtensils, FaConciergeBell, FaWineGlassAlt,
-  FaClipboardList,
-} from "react-icons/fa";
-import Navbar from "../navbar";
 // --- TYPES ---
 type FoodItem = {
   id: number;
@@ -400,24 +386,18 @@ export default function CulinaryOS() {
   const [view, setView] = useState<"user" | "paas">("user");
   const [foodItems, setFoodItems] = useState<FoodItem[]>(INITIAL_FOOD_DATA);
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [logs, setLogs] = useState<SystemLog[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [search, setSearch] = useState("");
+  const filteredItems = useMemo(() => {
+    return foodItems.filter(item =>
+      item.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [foodItems, search]);
 
-  // SaaS Simulation: Background Logs
-  useEffect(() => {
-    const messages = ["Cache purged: instance_01", "DB Sync: 14ms", "SSL Handshake verified", "Payment Gateway: Active"];
-    const interval = setInterval(() => {
-      const newLog: SystemLog = {
-        id: Date.now(),
-        msg: messages[Math.floor(Math.random() * messages.length)],
-        type: "info"
-      };
-      setLogs(prev => [newLog, ...prev].slice(0, 5));
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
+  if (!foodItems.length) {
+    return <p className="text-center text-gray-400">No items found</p>;
+  }
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   // Handlers
@@ -442,190 +422,263 @@ export default function CulinaryOS() {
     <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-teal-500/30">
       {/* --- MASTER HEADER --- */}
       {/* <Navbar /> */}
-      <nav className="sticky top-0 z-50 bg-[#080808]/70 backdrop-blur-xl border-b border-white/[0.05] px-6 py-3">
-        <div className="max-w-[1400px] mx-auto flex justify-between items-center">
+      <nav className="sticky top-0 z-50 bg-[#0f0f0f]/90 backdrop-blur-lg border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
 
-          {/* 1. BRANDING: YatriHub Food */}
-          <div className="flex items-center gap-12">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="relative">
-                <FiCompass className="text-teal-400 text-2xl group-hover:rotate-[360deg] transition-transform duration-1000 ease-expo" />
-                <div className="absolute inset-0 bg-teal-400/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-light tracking-tighter text-white leading-none">
-                  YatriHub <span className="text-teal-500 font-medium">Food</span>
-                </span>
-              </div>
+          {/* LEFT: LOGO + LOCATION */}
+          <div className="flex items-center gap-4">
+
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2">
+              <FiCompass className="text-teal-500 text-xl" />
+              <span className="text-white font-semibold text-lg tracking-tight">
+                YatriHub
+              </span>
             </Link>
 
-            {/* 2. THE TOGGLE: High-Density & Pill-Shaped */}
-            <div className="hidden md:flex items-center bg-white/[0.03] p-1 rounded-full border border-white/[0.08]">
-              <button
-                onClick={() => setView("user")}
-                className={`px-6 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${view === "user"
-                  ? "bg-white text-black shadow-xl"
-                  : "text-gray-500 hover:text-white"
-                  }`}
-              >
-                Storefront
-              </button>
-              <button
-                onClick={() => setView("paas")}
-                className={`px-6 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${view === "paas"
-                  ? "bg-teal-500 text-black shadow-xl"
-                  : "text-gray-500 hover:text-white"
-                  }`}
-              >
-                Console
-              </button>
+            {/* Location (like Swiggy/Zomato) */}
+            <div className="hidden md:flex flex-col leading-tight">
+              <span className="text-xs text-gray-400">Delivery to</span>
+              <span className="text-sm text-white font-medium">
+                Nagpur, India
+              </span>
             </div>
           </div>
 
-          {/* 3. UTILITY: Telemetry & Cart */}
-          <div className="flex items-center gap-8">
-            <div className="text-right hidden lg:block border-r border-white/10 pr-8">
-              <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-0.5">Deployment</p>
-              <p className="text-[10px] font-mono text-teal-500/80">INDIA</p>
+          {/* CENTER: SEARCH BAR */}
+          <div className="flex-1 hidden md:flex">
+            <div className="w-full max-w-xl mx-auto relative">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search for dishes..."
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-teal-500 transition"
+              />
+            </div>
+          </div>
+
+          {/* RIGHT: ACTIONS */}
+          <div className="flex items-center gap-3">
+
+            {/* Toggle (cleaner) */}
+            <div className="hidden md:flex bg-white/5 border border-white/10 rounded-lg p-1">
+              <button
+                onClick={() => setView("user")}
+                className={`px-3 py-1 text-xs rounded-md transition ${view === "user"
+                  ? "bg-white text-black"
+                  : "text-gray-400 hover:text-white"
+                  }`}
+              >
+                User
+              </button>
+
+              <button
+                onClick={() => setView("paas")}
+                className={`px-3 py-1 text-xs rounded-md transition ${view === "paas"
+                  ? "bg-teal-500 text-black"
+                  : "text-gray-400 hover:text-white"
+                  }`}
+              >
+                Admin
+              </button>
             </div>
 
+            {/* Cart */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative group h-11 w-11 flex items-center justify-center rounded-full border border-white/10 hover:border-teal-500/50 hover:bg-teal-500/5 transition-all"
+              className="relative flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500 text-black font-medium hover:bg-teal-400 transition"
             >
-              <FiShoppingBag className="text-gray-400 group-hover:text-teal-400 transition-colors" size={18} />
+              <FiShoppingBag size={16} />
+              <span className="hidden sm:block text-sm">Cart</span>
+
               {cart.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-white text-black text-[9px] font-black h-5 w-5 flex items-center justify-center rounded-full border-2 border-[#080808]">
+                <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] h-5 w-5 flex items-center justify-center rounded-full border border-white/10">
                   {cart.length}
                 </span>
               )}
             </button>
           </div>
         </div>
+
+        {/* MOBILE SEARCH */}
+        <div className="md:hidden px-4 pb-3">
+          <input
+            type="text"
+            placeholder="Search food..."
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-teal-500"
+          />
+        </div>
       </nav>
 
-      {/* <RegistryConsole 
+      {/* <RegistryConsole
         view={view}
         foodItems={foodItems}
         toggleAvailability={toggleAvailability}
         addToCart={addToCart}
-        logs={logs}
       /> */}
-      <RegistryConsole 
-  view={view}
-  foodItems={foodItems}
-  toggleAvailability={toggleAvailability}
-  addToCart={addToCart}
-/>
+      {view === "paas" ? (
+        <RegistryConsole
+          view={view}
+          foodItems={foodItems}
+          toggleAvailability={toggleAvailability}
+          addToCart={addToCart}
+        />
+      ) : (
+        <>
+          {filteredItems.length === 0 ? (
+            <div className="text-center py-20 text-gray-400">
+              No dishes found
+            </div>
+          ) : (
+            <FoodGrid foodItems={filteredItems} addToCart={addToCart} />
+          )}
+        </>
+      )}
 
       <AnimatePresence>
         {isCartOpen && (
           <>
-            {/* Cinematic Overlay */}
+            {/* Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsCartOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
             />
 
+            {/* Drawer */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed top-0 right-0 h-full w-full max-w-md bg-[#080808] border-l border-white/5 z-[70] flex flex-col shadow-[[-20px_0_50px_rgba(0,0,0,0.5)]]"
+              transition={{ type: "spring", stiffness: 260, damping: 30 }}
+              className="fixed right-0 top-0 h-full w-full max-w-md bg-[#0f0f0f] z-[60] flex flex-col border-l border-white/10"
             >
-              {/* 1. COMPACT HEADER */}
-              <div className="p-6 border-b border-white/5 flex justify-between items-center">
+
+              {/* HEADER */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
                 <div>
-                  <h3 className="text-xl font-light tracking-tight text-white">Order Folio</h3>
-                  <p className="text-[9px] text-gray-500 font-bold uppercase tracking-[0.3em]">Ref: SUITE-B204</p>
+                  <h2 className="text-lg font-semibold text-white">Your Cart</h2>
+                  <p className="text-xs text-gray-400">
+                    {cart.length} items
+                  </p>
                 </div>
-                <button onClick={() => setIsCartOpen(false)} className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-colors">
-                  <FiX className="text-gray-400" size={18} />
+
+                <button
+                  onClick={() => setIsCartOpen(false)}
+                  className="p-2 rounded-full hover:bg-white/10 transition"
+                >
+                  <FiX size={18} />
                 </button>
               </div>
 
-              {/* 2. HIGH-DENSITY ITEM LIST */}
-              <div className="flex-1 overflow-y-auto custom-scrollbar">
+              {/* ITEMS */}
+              <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+
                 {cart.length === 0 ? (
-                  <div className="h-64 flex flex-col items-center justify-center opacity-20">
-                    <FaUtensils size={24} />
-                    <p className="text-[10px] font-bold uppercase tracking-widest mt-4">Registry Empty</p>
+                  <div className="h-full flex flex-col items-center justify-center text-center">
+                    <p className="text-gray-400 text-sm">Your cart is empty</p>
+                    <button
+                      onClick={() => setIsCartOpen(false)}
+                      className="mt-4 text-sm text-teal-400 hover:underline"
+                    >
+                      Browse menu
+                    </button>
                   </div>
                 ) : (
-                  <div className="divide-y divide-white/[0.03]">
-                    {cart.map((item: any) => (
-                      <div key={item.id} className="p-6 group flex items-start gap-4 hover:bg-white/[0.01] transition-colors">
-                        {/* Slim Thumbnail */}
-                        <div className="h-14 w-14 shrink-0 rounded bg-black overflow-hidden border border-white/5">
-                          <img src={item.image} className="h-full w-full object-cover group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500" />
-                        </div>
+                  cart.map((item: CartItem) => (
+                    <div
+                      key={item.id}
+                      className="flex gap-4 items-center border-b border-white/5 pb-4"
+                    >
+                      {/* Image */}
+                      <img
+                        src={item.image}
+                        className="h-16 w-16 rounded-lg object-cover"
+                      />
 
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start mb-1">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-tight truncate pr-4">{item.name}</h4>
-                            <span className="text-xs font-mono text-gray-400">₹{item.price * item.quantity}</span>
-                          </div>
+                      {/* Info */}
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium text-white">
+                          {item.name}
+                        </h3>
+                        <p className="text-xs text-gray-400">
+                          ₹{item.price}
+                        </p>
 
-                          <div className="flex items-center justify-between">
-                            {/* Minimalist Counter */}
-                            <div className="flex items-center gap-4 py-1">
-                              <button onClick={() => updateQty(item.id, -1)} className="text-gray-600 hover:text-white transition-colors"><FiMinus size={10} /></button>
-                              <span className="text-[10px] font-mono text-white w-4 text-center">{item.quantity}</span>
-                              <button onClick={() => updateQty(item.id, 1)} className="text-gray-600 hover:text-white transition-colors"><FiPlus size={10} /></button>
-                            </div>
+                        {/* Quantity Control */}
+                        <div className="flex items-center gap-3 mt-2">
+                          <button
+                            onClick={() => updateQty(item.id, -1)}
+                            className="h-7 w-7 flex items-center justify-center border border-white/10 rounded"
+                          >
+                            <FiMinus size={12} />
+                          </button>
 
-                            <button
-                              onClick={() => updateQty(item.id, -item.quantity)}
-                              className="text-[8px] font-black uppercase text-gray-700 hover:text-red-500 tracking-[0.2em] transition-colors"
-                            >
-                              Void
-                            </button>
-                          </div>
+                          <span className="text-sm font-medium">
+                            {item.quantity}
+                          </span>
+
+                          <button
+                            onClick={() => updateQty(item.id, 1)}
+                            className="h-7 w-7 flex items-center justify-center border border-white/10 rounded"
+                          >
+                            <FiPlus size={12} />
+                          </button>
                         </div>
                       </div>
-                    ))}
-                  </div>
+
+                      {/* Price */}
+                      <div className="text-sm font-medium text-white">
+                        ₹{item.price * item.quantity}
+                      </div>
+                    </div>
+                  ))
                 )}
               </div>
 
-              {/* 3. TERMINAL STYLE SUMMARY */}
-              <div className="p-6 bg-[#0a0a0a] border-t border-white/10">
-                <div className="space-y-2 mb-8 font-mono">
-                  <div className="flex justify-between text-[10px] text-gray-500 uppercase">
-                    <span>Subtotal</span>
-                    <span>₹{cartTotal.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-[10px] text-gray-500 uppercase">
-                    <span>Luxury Tax (5%)</span>
-                    <span>₹{(cartTotal * 0.05).toFixed(0)}</span>
-                  </div>
-                  <div className="flex justify-between items-end pt-4 border-t border-white/5 mt-4">
-                    <span className="text-[11px] uppercase tracking-[0.2em] text-white">Total Commitment</span>
-                    <span className="text-3xl font-light text-teal-400 tracking-tighter italic">₹{Math.floor(cartTotal * 1.05).toLocaleString()}</span>
-                  </div>
-                </div>
+              {/* BILL SUMMARY */}
+              {cart.length > 0 && (
+                <div className="border-t border-white/10 p-5 space-y-4 bg-[#111]">
 
-                {/* Action: Microsoft-SaaS Style Button */}
-                <button
-                  onClick={() => { setOrderSuccess(true); setIsCartOpen(false); }}
-                  className="w-full h-16 bg-white text-black rounded-sm font-black uppercase text-[10px] tracking-[0.5em] transition-all hover:bg-teal-500 hover:text-white active:scale-[0.98] flex items-center justify-center gap-3"
-                >
-                  Transmit Payload
-                </button>
+                  {/* Price Breakdown */}
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between text-gray-400">
+                      <span>Item Total</span>
+                      <span>₹{cartTotal}</span>
+                    </div>
 
-                <div className="mt-8 flex justify-center items-center gap-6 opacity-40">
-                  <div className="flex items-center gap-2 text-[7px] font-black uppercase tracking-widest text-gray-400">
-                    <FaShieldAlt className="text-teal-500" /> Encrypted-v4
+                    <div className="flex justify-between text-gray-400">
+                      <span>Delivery Fee</span>
+                      <span>₹40</span>
+                    </div>
+
+                    <div className="flex justify-between text-gray-400">
+                      <span>Taxes</span>
+                      <span>₹{Math.floor(cartTotal * 0.05)}</span>
+                    </div>
+
+                    <div className="flex justify-between text-white font-semibold border-t border-white/10 pt-2">
+                      <span>To Pay</span>
+                      <span>
+                        ₹{cartTotal + 40 + Math.floor(cartTotal * 0.05)}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-[7px] font-black uppercase tracking-widest text-gray-400">
-                    <FiCheckCircle className="text-teal-500" /> PCI-DSS-Ready
-                  </div>
+
+                  {/* CTA */}
+                  <button
+                    onClick={() => {
+                      setOrderSuccess(true);
+                      setIsCartOpen(false);
+                    }}
+                    className="w-full py-4 rounded-lg bg-teal-500 text-black font-semibold hover:bg-teal-400 transition"
+                  >
+                    Proceed to Checkout
+                  </button>
                 </div>
-              </div>
+              )}
             </motion.div>
           </>
         )}
@@ -633,98 +686,175 @@ export default function CulinaryOS() {
 
       {/* --- CULINARY PROVISIONING SUCCESS OVERLAY --- */}
       <AnimatePresence>
-        {orderSuccess && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-3xl flex items-center justify-center p-6"
+  {orderSuccess && (
+    <motion.div
+      key="overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-md flex items-center justify-center px-4"
+      onClick={() => setOrderSuccess(false)}
+    >
+      {/* MODAL */}
+      <motion.div
+        key="modal"
+        initial={{ opacity: 0, scale: 0.9, y: 40 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ type: "spring", stiffness: 220, damping: 18 }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-sm bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.25)] p-6 text-center"
+      >
+        {/* SUCCESS ICON */}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+          className="w-20 h-20 mx-auto mb-5 rounded-full bg-green-100 flex items-center justify-center"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="w-10 h-10 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <motion.div
-              initial={{ scale: 0.95, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              className="max-w-md w-full bg-[#0a0a0a] border border-white/10 p-12 rounded-sm shadow-[0_0_100px_rgba(0,0,0,1)] text-center relative overflow-hidden"
-            >
-              {/* Subtle Background Grid Accent */}
-              <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+            <motion.path
+              d="M5 13l4 4L19 7"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            />
+          </svg>
+        </motion.div>
 
-              {/* --- CUSTOM ANIMATED SVG ICON --- */}
-              <div className="relative w-24 h-24 mx-auto mb-8">
-                <svg viewBox="0 0 100 100" className="w-full h-full">
-                  {/* Background Circle Path */}
-                  <motion.circle
-                    cx="50" cy="50" r="45"
-                    fill="transparent"
-                    stroke="rgba(20, 184, 166, 0.1)"
-                    strokeWidth="2"
-                  />
-                  {/* Animated Progress Ring */}
-                  <motion.circle
-                    cx="50" cy="50" r="45"
-                    fill="transparent"
-                    stroke="#14b8a6"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    initial={{ pathLength: 0, rotate: -90 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 1.5, ease: "easeInOut" }}
-                  />
-                  {/* Animated Checkmark */}
-                  <motion.path
-                    d="M30 50 L45 65 L70 35"
-                    fill="transparent"
-                    stroke="#14b8a6"
-                    strokeWidth="6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 0.8, delay: 1.2, ease: "easeOut" }}
-                  />
-                </svg>
-              </div>
+        {/* TITLE */}
+        <motion.h2
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="text-xl font-semibold text-gray-900"
+        >
+          Order Confirmed 🎉
+        </motion.h2>
 
-              {/* Content using Hospitality-PaaS Language */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.8 }}
+        {/* SUBTEXT */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-sm text-gray-500 mt-2"
+        >
+          Your order has been successfully placed and is now being prepared.
+        </motion.p>
+
+        {/* ETA */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mt-5 bg-gray-100 rounded-lg py-3"
+        >
+          <p className="text-xs text-gray-500">Estimated Delivery</p>
+          <p className="text-lg font-semibold text-gray-900">
+            25–30 mins
+          </p>
+        </motion.div>
+
+        {/* ACTIONS */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="mt-6 space-y-3"
+        >
+          <button
+            onClick={() => {
+              setOrderSuccess(false);
+              setCart([]);
+            }}
+            className="w-full py-3 rounded-lg bg-black text-white font-medium hover:bg-gray-800 transition"
+          >
+            Continue Browsing
+          </button>
+
+          <button
+            onClick={() => {
+              setOrderSuccess(false);
+              setCart([]);
+              setIsCartOpen(true);
+            }}
+            className="w-full py-2 text-sm text-gray-500 hover:text-black transition"
+          >
+            View Cart Again
+          </button>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+    </div>
+  );
+}
+
+function FoodGrid({ foodItems, addToCart, }: { foodItems: FoodItem[]; addToCart: (item: FoodItem) => void; }) {
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {foodItems.map((item) => (
+        <div
+          key={item.id}
+          className="bg-[#111] rounded-xl overflow-hidden border border-white/5 hover:scale-[1.02] transition"
+        >
+          <img
+            src={item.image}
+            className="h-40 w-full object-cover"
+          />
+
+          <div className="p-4">
+
+            {/* 🔴 VEG / NON-VEG INDICATOR */}
+            <div className="flex items-center gap-2 mb-1">
+              <span className={`h-2 w-2 rounded-full ${item.type === "veg" ? "bg-green-500" :
+                item.type === "non-veg" ? "bg-red-500" :
+                  "bg-yellow-500"
+                }`} />
+              <span className="text-[10px] text-gray-500 uppercase">
+                {item.type}
+              </span>
+            </div>
+
+            {/* 🍽 FOOD NAME */}
+            <h3 className="text-sm font-semibold text-white">
+              {item.name}
+            </h3>
+
+            <div className="flex items-center justify-between text-xs mt-1">
+              <span className="text-yellow-400 font-medium">
+                ⭐ {item.rating}
+              </span>
+              <span className="text-gray-400">
+                {item.time}
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center mt-3">
+              <span className="text-sm font-medium text-white">
+                ₹{item.price}
+              </span>
+
+              <button
+                onClick={() => addToCart(item)}
+                disabled={!item.isAvailable}
+                className="px-3 py-1 text-xs bg-teal-500 text-black rounded hover:bg-teal-400 disabled:opacity-40"
               >
-                <h2 className="text-xs font-black uppercase tracking-[0.1em] text-teal-500 mb-2">Transaction Finalized</h2>
-                <h3 className="text-2xl font-serif italic text-white mb-4">Folio Invoiced Successfully</h3>
-
-                <div className="space-y-4 mb-10">
-                  <div className="bg-white/5 border border-white/5 py-3 px-4 rounded-sm flex justify-between items-center">
-                    <span className="text-[9px] text-gray-500 uppercase">Routing Status</span>
-                    <span className="text-[9px] text-teal-400 font-bold uppercase">Sent to Kitchen Station 01</span>
-                  </div>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-normal leading-relaxed px-4">
-                    The kitchen team has been notified. Estimated preparation window is being calculated by the local instance.
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => setOrderSuccess(false)}
-                  className="w-full py-5 bg-white text-black font-black uppercase text-[10px] tracking-[0.1em] hover:bg-teal-500 hover:text-white transition-all rounded-sm shadow-xl"
-                >
-                  Return to Management Console
-                </button>
-              </motion.div>
-
-              {/* Footer Technical Detail */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2.2 }}
-                className="mt-8 text-[8px] font-mono text-gray-700 uppercase"
-              >
-                Auth Token: {Math.random().toString(16).slice(2, 18).toUpperCase()}
-              </motion.p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                ADD
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -15,6 +15,7 @@ import HeroSection from "./herotab";
 import FAANGBentoGrid from "./dumpcode/hero2";
 import RoomsSection from "./premium";
 import EcosystemSection from "./supertravel";
+import CulinarySection from "./dine";
 
 function DiscoveryServiceCard({ number, name, href, desc }: any) {
   return (
@@ -175,7 +176,7 @@ export default function Home() {
       <Navbar />
 
       {/* HERO SECTION */}
-      <HeroSection/>
+      <HeroSection />
       {/* <FAANGBentoGrid/> */}
 
       {/* BENTO GRID FEATURES */}
@@ -344,7 +345,7 @@ export default function Home() {
         </div>
       </section>
 
-      <RoomsSection/>
+      <RoomsSection />
 
       {/* PREMIER ROOMS ECOSYSTEM */}
       <section className="py-24 border-t border-white/5 bg-black relative overflow-hidden">
@@ -532,17 +533,14 @@ export default function Home() {
       </section>
 
       {/* <EcosystemSection services={services} /> */}
+      <CulinarySection />
 
       {/* GOURMET ECOSYSTEM SECTION */}
-      <section className="relative py-32 bg-[#050505] overflow-hidden">
-
-        {/* 🌌 Luxury Ambient Background */}
+      {/* <section className="relative py-32 bg-[#050505] overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(168,85,247,0.12),transparent_40%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(236,72,153,0.10),transparent_40%)]" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-
-          {/* 🧠 Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 gap-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -567,7 +565,6 @@ export default function Home() {
               </p>
             </motion.div>
 
-            {/* CTA */}
             <Link
               href="/food"
               className="group flex items-center gap-3 px-8 py-4 rounded-full bg-white/[0.03] border border-white/10 text-xs uppercase tracking-[0.25em] text-gray-300 hover:text-white hover:border-purple-500/50 hover:bg-purple-500/10 transition-all duration-500"
@@ -577,7 +574,6 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* 🍽️ Premium Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {items.map((item, i) => (
               <motion.div
@@ -590,18 +586,14 @@ export default function Home() {
                 <Link href={`/food?cat=${item.cat}`}>
                   <div className="group relative p-[1px] rounded-[2rem] bg-gradient-to-b from-white/10 to-white/5 hover:from-purple-500/40 hover:to-fuchsia-500/40 transition-all duration-500">
 
-                    {/* Glass Layer */}
                     <div className="relative h-full rounded-[2rem] bg-white/[0.03] backdrop-blur-xl border border-white/10 p-8 overflow-hidden">
 
-                      {/* ✨ Hover Glow */}
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-purple-500/10 to-fuchsia-500/10" />
 
-                      {/* 💡 Floating Icon */}
                       <div className="mb-14 w-16 h-16 flex items-center justify-center rounded-2xl bg-white/[0.04] border border-white/10 text-2xl text-purple-300 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white group-hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] transition-all duration-500">
                         {item.icon}
                       </div>
 
-                      {/* 📝 Content */}
                       <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-purple-200 transition">
                         {item.name}
                       </h3>
@@ -610,12 +602,10 @@ export default function Home() {
                         {item.desc}
                       </p>
 
-                      {/* ➡️ Hover Action */}
                       <div className="mt-10 flex items-center gap-2 text-xs tracking-wider uppercase text-purple-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
                         Discover <FaArrowRight size={10} />
                       </div>
 
-                      {/* 🌟 Shine Sweep */}
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-[linear-gradient(120deg,transparent,white,transparent)] translate-x-[-100%] group-hover:translate-x-[100%] transition duration-1000" />
                     </div>
                   </div>
@@ -624,17 +614,21 @@ export default function Home() {
             ))}
           </div>
 
-          {/* 🔥 Bottom Tagline (NEW – makes it feel premium product) */}
           <div className="mt-24 text-center">
             <p className="text-sm text-gray-500 tracking-wide">
               Designed for modern travelers • Powered by real-time culinary intelligence
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* <DiscoveryServiceCard /> */}
-      
+      {/* <DiscoveryServiceCard
+        number="01"
+        name="Wellness Retreat"
+        desc="Meditation & spa experiences"
+        href="/discovery/wellness"
+      /> */}
+
       {/* DISCOVERY ECOSYSTEM SECTION */}
       <section className="relative py-32 bg-[#050505] overflow-hidden">
 
