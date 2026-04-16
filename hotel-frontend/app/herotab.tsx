@@ -51,15 +51,15 @@ export default function FAANGHero() {
   });
 
   const handleSearch = () => {
-  setLoading(true);
+    setLoading(true);
 
-  setTimeout(() => {
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
 
-    // Redirect to new page
-    router.push("/search");
-  }, 1000);
-};
+      // Redirect to new page
+      router.push("/search");
+    }, 1000);
+  };
 
   return (
     <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-20 pb-20 px-6 bg-[#050505] overflow-hidden">
@@ -74,25 +74,73 @@ export default function FAANGHero() {
 
         {/* BADGE */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-8"
+          initial={{ opacity: 0, y: 12, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 260,
+            damping: 20,
+          }}
+          className="
+          relative inline-flex items-center gap-2
+          px-4 py-1.5 rounded-full
+          border border-white/10
+          bg-white/5 backdrop-blur-2xl
+          text-indigo-300 text-[10px]
+          font-semibold uppercase tracking-[0.25em]
+          shadow-lg
+          overflow-hidden
+        "
         >
+          {/* 🌫 ambient glow layer */}
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-transparent to-cyan-500/10 opacity-70" />
+
+          {/* 🟣 pulse dot (visionOS style) */}
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+            <span className="absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-40 blur-sm animate-pulse" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-400" />
           </span>
-          Next-Gen Ecosystem
+
+          {/* label */}
+          <span className="relative z-10">Next-Gen Ecosystem</span>
         </motion.div>
 
         {/* TITLE */}
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-6xl md:text-8xl font-bold tracking-tight mb-8 bg-gradient-to-b from-white via-white to-white/40 bg-clip-text text-transparent"
+          initial={{ opacity: 0, y: 28, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 180,
+            damping: 22,
+            delay: 0.1,
+          }}
+          className="
+              relative z-10
+              text-5xl md:text-8xl font-bold tracking-tight mb-8
+              text-center
+            "
         >
-          Travel reimagined.
+          {/* 🌫 ambient glow layer */}
+          <span className="relative inline-block">
+  
+  {/* 🌌 soft atmospheric glow (single layer only) */}
+  <span className="absolute inset-0 blur-2xl opacity-20 bg-gradient-to-r from-indigo-400/30 via-cyan-300/20 to-fuchsia-400/30" />
+
+  {/* ✨ aurora text */}
+  <span
+    className="
+      relative
+      bg-gradient-to-r from-indigo-400 via-cyan-300 via-fuchsia-400 to-emerald-300
+      bg-[length:300%_300%]
+      animate-[aurora_8s_ease-in-out_infinite]
+      bg-clip-text text-transparent
+    "
+  >
+    Travel reimagined.
+  </span>
+
+</span>
         </motion.h1>
 
         {/* TABS */}
@@ -102,9 +150,8 @@ export default function FAANGHero() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                  activeTab === tab.id ? "text-white" : "text-gray-500 hover:text-gray-300"
-                }`}
+                className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === tab.id ? "text-white" : "text-gray-500 hover:text-gray-300"
+                  }`}
               >
                 <span className="text-lg">{tab.icon}</span>
                 <span className="hidden md:block">{tab.id}</span>

@@ -28,7 +28,22 @@ export default function SearchPage() {
         <div className="flex justify-center mt-8">
           <div className="h-6 w-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
         </div>
+      {/* ACTION */}
+      <button
+        onClick={() => window.history.back()}
+        className="
+            mt-6 px-5 py-2
+            rounded-full
+            bg-white/10 hover:bg-white/20
+            border border-white/10
+            text-sm text-white
+            transition
+          "
+      >
+        Go Back
+      </button>
       </motion.div>
+
 
     </main>
   );

@@ -1,285 +1,226 @@
-'use client';
+"use client";
 
-import { useState, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   motion,
   AnimatePresence,
   useScroll,
   useTransform,
-  MotionValue,
-} from 'framer-motion';
-import Link from 'next/link';
+} from "framer-motion";
+import Link from "next/link";
 
-/* =========================
-   🔹 TYPES
-========================= */
+/* ================= TYPES ================= */
 type LoginForm = {
   email: string;
   password: string;
 };
 
-type FieldConfig = {
-  label: string;
-  key: keyof LoginForm;
-  type: string;
-};
-
 type InputProps = {
   label: string;
-  type: string;
   value: string;
+  type: string;
   error?: string;
-  onChange: (val: string) => void;
+  onChange: (value: string) => void;
 };
 
-type BackgroundProps = {
-  yMain: MotionValue<number>;
-  rotate: MotionValue<number>;
+/* ================= VALIDATION ================= */
+const validate = (form: LoginForm) => {
+  const e: Partial<LoginForm> = {};
+  if (!form.email) e.email = "Required";
+  else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Invalid";
+
+  if (!form.password) e.password = "Required";
+  else if (form.password.length < 6) e.password = "Too short";
+
+  return e;
 };
 
-/* =========================
-   🔹 CONFIG
-========================= */
-const fields: FieldConfig[] = [
-  { label: 'Email Address', key: 'email', type: 'email' },
-  { label: 'Password', key: 'password', type: 'password' },
-];
-
-/* =========================
-   🔹 VALIDATION ENGINE
-========================= */
-const validateForm = (form: LoginForm) => {
-  const errors: Partial<LoginForm> = {};
-
-  if (!form.email) errors.email = 'Email is required';
-  else if (!/\S+@\S+\.\S+/.test(form.email))
-    errors.email = 'Invalid email format';
-
-  if (!form.password) errors.password = 'Password is required';
-  else if (form.password.length < 6)
-    errors.password = 'Minimum 6 characters required';
-
-  return errors;
-};
-
-/* =========================
-   🔹 MAIN COMPONENT
-========================= */
+/* ================= MAIN ================= */
 export default function LoginPage() {
   const router = useRouter();
-  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  /* 🌌 PARALLAX */
   const { scrollY } = useScroll();
-  const yMain = useTransform(scrollY, [0, 500], [0, -120]);
-  const rotate = useTransform(scrollY, [0, 500], [0, 20]);
+  const y = useTransform(scrollY, [0, 400], [0, -80]);
+  const blur = useTransform(scrollY, [0, 300], [40, 80]);
 
-  /* 🧠 STATE */
   const [form, setForm] = useState<LoginForm>({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState<Partial<LoginForm>>({});
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
-  /* =========================
-     🔹 HANDLERS
-  ========================= */
   const handleChange = useCallback(
-    (key: keyof LoginForm, value: string) => {
-      setForm((prev) => ({ ...prev, [key]: value }));
-
-      // live validation
-      setErrors((prev) => ({ ...prev, [key]: '' }));
+    (k: keyof LoginForm, v: string) => {
+      setForm((p) => ({ ...p, [k]: v }));
+      setErrors((p) => ({ ...p, [k]: "" }));
     },
     []
   );
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const err = validate(form);
+    setErrors(err);
 
-    const validationErrors = validateForm(form);
-    setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) return;
+    if (Object.keys(err).length) return;
 
     setLoading(true);
-
-    try {
-      // 🔌 Replace with real API
-      await new Promise((res) => setTimeout(res, 1200));
-
-      setSuccess(true);
-
-      setTimeout(() => router.push('/dashboard'), 800);
-    } catch {
-      setErrors({ email: 'Authentication failed' });
-    } finally {
-      setLoading(false);
-    }
+    await new Promise((r) => setTimeout(r, 1200));
+    router.push("/dashboard");
   };
 
-  /* =========================
-     🔹 UI
-  ========================= */
   return (
-    <div
-      ref={containerRef}
-      className="min-h-screen bg-[#020202] flex items-center justify-center px-6 text-zinc-400"
-    >
-      <Background yMain={yMain} rotate={rotate} />
+    <div className="min-h-screen bg-black flex items-center justify-center px-6 overflow-hidden">
 
+      {/* 🌌 AMBIENT BACKGROUND */}
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative z-10 w-full max-w-sm"
+        style={{ y, filter: blur }}
+        className="absolute inset-0 pointer-events-none"
       >
-        <Header />
+        <div className="absolute top-[-200px] left-[-200px] w-[500px] h-[500px] bg-indigo-500/20 blur-[140px] rounded-full" />
+        <div className="absolute bottom-[-200px] right-[-200px] w-[500px] h-[500px] bg-purple-500/20 blur-[140px] rounded-full" />
+      </motion.div>
 
-        <form onSubmit={handleLogin} className="space-y-8" noValidate>
-          {/* Inputs */}
-          <div className="space-y-6">
-            {fields.map((field) => (
-              <InputField
-                key={field.key}
-                label={field.label}
-                type={field.type}
-                value={form[field.key]}
-                error={errors[field.key]}
-                onChange={(val) => handleChange(field.key, val)}
-              />
-            ))}
+      {/* 🌑 GLASS CARD */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="relative z-10 w-full max-w-md"
+      >
+        <div className="
+          rounded-[28px]
+          bg-white/[0.04]
+          backdrop-blur-3xl
+          border border-white/10
+          shadow-[0_30px_80px_rgba(0,0,0,0.7)]
+          p-10
+        ">
+
+          {/* HEADER */}
+          <div className="text-center mb-10">
+            <h1 className="text-[28px] font-semibold text-white">
+              Yatri<span className="text-indigo-400">Hub</span>
+            </h1>
+            <p className="text-sm text-white/40 mt-1">
+              Continue your journey
+            </p>
           </div>
 
-          {/* Submit */}
-          <SubmitButton loading={loading} success={success} />
-        </form>
+          {/* FORM */}
+          <form onSubmit={submit} className="space-y-7">
 
-        <Footer />
+            <Input
+              label="Email"
+              type="email"
+              value={form.email}
+              error={errors.email}
+              onChange={(v: string) => handleChange("email", v)}
+            />
+
+            <Input
+              label="Password"
+              type="password"
+              value={form.password}
+              error={errors.password}
+              onChange={(v: string) => handleChange("password", v)}
+            />
+
+            {/* BUTTON */}
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              disabled={loading}
+              className="
+                w-full py-3 rounded-full
+                bg-white text-black font-medium text-sm
+                transition
+                hover:bg-white/90
+                active:bg-white/80
+                disabled:opacity-50
+              "
+            >
+              {loading ? "Signing in..." : "Continue"}
+            </motion.button>
+          </form>
+
+          {/* FOOTER */}
+          <div className="mt-10 text-center">
+            <Link
+              href="/register"
+              className="text-sm text-white/40 hover:text-white transition"
+            >
+              Create account
+            </Link>
+          </div>
+        </div>
       </motion.div>
     </div>
   );
 }
 
-/* =========================
-   🔹 COMPONENTS
-========================= */
+/* ================= INPUT ================= */
+function Input({ label, value, onChange, error, type }: InputProps) {
+  const active = value.length > 0;
 
-function Header() {
   return (
-    <header className="mb-12 text-center">
-      <h1 className="text-4xl font-light text-white tracking-[0.25em] uppercase">
-        Yatri
-        <span className="text-teal-400 italic lowercase tracking-normal">
-          hub
-        </span>
-      </h1>
-
-      <p className="mt-4 text-[10px] tracking-[0.4em] text-zinc-500 uppercase">
-        Secure Access Portal
-      </p>
-    </header>
-  );
-}
-
-/* 🔹 Input */
-function InputField({ label, type, value, error, onChange }: InputProps) {
-  return (
-    <div className="group">
-      <label className="text-[9px] uppercase tracking-widest text-zinc-600 group-focus-within:text-teal-400 transition">
-        {label}
-      </label>
+    <div className="relative group">
 
       <input
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={label.toUpperCase()}
-        aria-invalid={!!error}
-        aria-describedby={`${label}-error`}
-        className={`w-full bg-transparent border-b py-3 text-sm text-white outline-none transition
-          ${error ? 'border-red-500' : 'border-zinc-800 focus:border-teal-500'}
-        `}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          onChange(e.target.value)
+        }
+        className="
+          w-full bg-transparent
+          border-b border-white/10
+          focus:border-white
+          py-3 text-white outline-none
+          transition
+        "
       />
 
+      {/* LABEL */}
+      <label
+        className={`
+          absolute left-0 transition-all duration-300 pointer-events-none
+          ${
+            active
+              ? "-top-3 text-xs text-white/40"
+              : "top-3 text-sm text-white/30"
+          }
+          group-focus-within:-top-3
+          group-focus-within:text-xs
+          group-focus-within:text-white/50
+        `}
+      >
+        {label}
+      </label>
+
+      {/* FOCUS GLOW */}
+      <div className="
+        absolute bottom-0 left-0 right-0 h-[1px]
+        bg-white opacity-0
+        group-focus-within:opacity-100
+        transition
+      " />
+
+      {/* ERROR */}
       <AnimatePresence>
         {error && (
           <motion.p
-            id={`${label}-error`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-[10px] text-red-400 mt-1"
+            className="text-xs text-red-400 mt-1"
           >
             {error}
           </motion.p>
         )}
       </AnimatePresence>
-    </div>
-  );
-}
-
-/* 🔹 Submit */
-function SubmitButton({
-  loading,
-  success,
-}: {
-  loading: boolean;
-  success: boolean;
-}) {
-  return (
-    <button
-      type="submit"
-      disabled={loading || success}
-      className="w-full py-4 rounded-full bg-white text-black text-sm font-semibold tracking-widest transition hover:scale-[1.02] disabled:opacity-50"
-    >
-      {success
-        ? 'Access Granted'
-        : loading
-        ? 'Verifying...'
-        : 'Login'}
-    </button>
-  );
-}
-
-/* 🔹 Footer */
-function Footer() {
-  return (
-    <div className="mt-16 text-center space-y-4">
-      <Link
-        href="/register"
-        className="text-xs text-zinc-500 hover:text-white transition"
-      >
-        Create new account
-      </Link>
-
-      <p className="text-[10px] text-zinc-700">
-        © 2026 YatriHub
-      </p>
-    </div>
-  );
-}
-
-/* =========================
-   🌌 BACKGROUND
-========================= */
-
-function Background({ yMain, rotate }: BackgroundProps) {
-  return (
-    <div className="fixed inset-0 pointer-events-none">
-
-      {/* Grid */}
-      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] bg-[size:40px_40px]" />
-
-      {/* Glow */}
-      <motion.div
-        style={{ y: yMain, rotate }}
-        className="absolute -right-40 top-0 w-[600px] h-[600px] bg-teal-500/10 blur-[120px] rounded-full"
-      />
     </div>
   );
 }
