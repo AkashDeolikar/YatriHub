@@ -322,7 +322,8 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import RegistryConsole from "../food/admin";
 import {
-  FiPlus, FiMinus, FiShoppingBag, FiX, FiCompass
+  FiPlus, FiMinus, FiShoppingBag, FiX, FiCompass,
+  FiSearch
 } from "react-icons/fi";
 // --- TYPES ---
 type FoodItem = {
@@ -418,95 +419,150 @@ export default function CulinaryOS() {
     setFoodItems(prev => prev.map(i => i.id === id ? { ...i, isAvailable: !i.isAvailable } : i));
   };
 
+  const [scrolled, setScrolled] = useState(false);
+
+  /* 📜 detect scroll */
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-teal-500/30">
       {/* --- MASTER HEADER --- */}
       {/* <Navbar /> */}
-      <nav className="sticky top-0 z-50 bg-[#0f0f0f]/90 backdrop-blur-lg border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <nav className="sticky top-0 z-50 w-full overflow-hidden">
+        {/* 🧊 GLASS MORPHISM BACKGROUND */}
+        <div
+          className={`
+          absolute inset-0 -z-10
+          transition-all duration-700 ease-in-out
+          ${scrolled
+              ? "bg-black/80 backdrop-blur-2xl saturate-150"
+              : "bg-black/20 backdrop-blur-md saturate-100"}
+        `}
+        />
 
-          {/* LEFT: LOGO + LOCATION */}
-          <div className="flex items-center gap-4">
+        {/* ⚡️ HAIRLINE BORDERS (True iOS style) */}
+        <div className="absolute top-0 w-full h-[0.5px] bg-white/15" />
+        <div className={`
+        absolute bottom-0 w-full h-[0.5px] bg-white/10 transition-opacity duration-500
+        ${scrolled ? "opacity-100" : "opacity-0"}
+      `} />
 
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <FiCompass className="text-teal-500 text-xl" />
-              <span className="text-white font-semibold text-lg tracking-tight">
+        <div className="max-w-7xl mx-auto px-5">
+
+          {/* 🔝 TOP NAVIGATION ROW */}
+          <div className="flex items-center justify-between h-14">
+
+            {/* LOGO */}
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 group active:scale-95 transition-transform duration-200"
+            >
+              <div className="p-1.5 bg-teal-500/10 rounded-lg group-hover:bg-teal-500/20 transition-colors">
+                <FiCompass className="text-teal-400 text-xl" />
+              </div>
+              <span className="text-white font-bold tracking-tight text-[19px]">
                 YatriHub
               </span>
             </Link>
 
-            {/* Location (like Swiggy/Zomato) */}
-            <div className="hidden md:flex flex-col leading-tight">
-              <span className="text-xs text-gray-400">Delivery to</span>
-              <span className="text-sm text-white font-medium">
-                Nagpur, India
-              </span>
-            </div>
-          </div>
+            {/* ACTIONS */}
+            <div className="flex items-center gap-4">
 
-          {/* CENTER: SEARCH BAR */}
-          <div className="flex-1 hidden md:flex">
-            <div className="w-full max-w-xl mx-auto relative">
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search for dishes..."
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-teal-500 transition"
-              />
-            </div>
-          </div>
+              {/* 🍏 SEGMENTED CONTROL */}
+              <div className="hidden sm:flex relative bg-white/10 p-[3px] rounded-xl w-36">
+                <div
+                  className={`
+                  absolute top-[3px] bottom-[3px] w-[calc(50%-3px)] rounded-lg bg-white
+                  shadow-lg transition-all duration-400 cubic-bezier(0.4, 0, 0.2, 1)
+                  ${view === "user" ? "left-[3px]" : "left-1/2"}
+                `}
+                />
+                <button
+                  onClick={() => setView("user")}
+                  className={`relative z-10 flex-1 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors duration-300
+                  ${view === "user" ? "text-black" : "text-gray-400 hover:text-white"}`}
+                >
+                  User
+                </button>
+                <button
+                  onClick={() => setView("paas")}
+                  className={`relative z-10 flex-1 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors duration-300
+                  ${view === "paas" ? "text-black" : "text-gray-400 hover:text-white"}`}
+                >
+                  Admin
+                </button>
+              </div>
 
-          {/* RIGHT: ACTIONS */}
-          <div className="flex items-center gap-3">
-
-            {/* Toggle (cleaner) */}
-            <div className="hidden md:flex bg-white/5 border border-white/10 rounded-lg p-1">
+              {/* 🛒 CART BUTTON */}
               <button
-                onClick={() => setView("user")}
-                className={`px-3 py-1 text-xs rounded-md transition ${view === "user"
-                  ? "bg-white text-black"
-                  : "text-gray-400 hover:text-white"
-                  }`}
+                onClick={() => setIsCartOpen(true)}
+                className="
+                relative flex items-center justify-center
+                h-10 w-10 rounded-full
+                bg-white/10 border border-white/5
+                hover:bg-white/20 active:scale-90 
+                transition-all duration-200
+              "
+                aria-label="Open Cart"
               >
-                User
-              </button>
-
-              <button
-                onClick={() => setView("paas")}
-                className={`px-3 py-1 text-xs rounded-md transition ${view === "paas"
-                  ? "bg-teal-500 text-black"
-                  : "text-gray-400 hover:text-white"
-                  }`}
-              >
-                Admin
+                <FiShoppingBag className="text-white text-lg" />
+                {cart.length > 0 && (
+                  <span className="
+                  absolute -top-1 -right-1
+                  bg-teal-500 text-black text-[10px] font-bold
+                  h-5 w-5 flex items-center justify-center
+                  rounded-full shadow-lg border-2 border-black
+                ">
+                    {cart.length}
+                  </span>
+                )}
               </button>
             </div>
-
-            {/* Cart */}
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500 text-black font-medium hover:bg-teal-400 transition"
-            >
-              <FiShoppingBag size={16} />
-              <span className="hidden sm:block text-sm">Cart</span>
-
-              {cart.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] h-5 w-5 flex items-center justify-center rounded-full border border-white/10">
-                  {cart.length}
-                </span>
-              )}
-            </button>
           </div>
-        </div>
 
-        {/* MOBILE SEARCH */}
-        <div className="md:hidden px-4 pb-3">
-          <input
-            type="text"
-            placeholder="Search food..."
-            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-teal-500"
-          />
+          {/* 🧠 DYNAMIC LARGE TITLE & SEARCH AREA */}
+          <div className={`
+          overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+          ${scrolled ? "max-h-0 opacity-0 translate-y-[-20px]" : "max-h-40 opacity-100 translate-y-0"}
+        `}>
+            <div className="py-4">
+              <h1 className="text-4xl font-bold text-white tracking-tight">
+                Discover Food
+              </h1>
+            </div>
+
+            {/* 🔍 SEARCH BAR */}
+            <div className="pb-5">
+              <div className="
+              group flex items-center gap-3
+              bg-white/10 backdrop-blur-xl
+              border border-white/10 rounded-2xl
+              px-4 h-12
+              focus-within:bg-white/[0.15] focus-within:border-white/25
+              transition-all duration-300
+            ">
+                <FiSearch className="text-gray-400 group-focus-within:text-teal-400 transition-colors" />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search restaurants, dishes..."
+                  className="
+                  w-full bg-transparent
+                  text-[16px] text-white placeholder-gray-500
+                  outline-none
+                "
+                />
+              </div>
+            </div>
+          </div>
+
         </div>
       </nav>
 
@@ -538,119 +594,158 @@ export default function CulinaryOS() {
       <AnimatePresence>
         {isCartOpen && (
           <>
-            {/* Overlay */}
+            {/* ================= BACKDROP ================= */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
               onClick={() => setIsCartOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
             />
 
-            {/* Drawer */}
-            <motion.div
-              initial={{ x: "100%" }}
+            {/* ================= DRAWER ================= */}
+            <motion.aside
+              initial={{ x: 420 }}
               animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", stiffness: 260, damping: 30 }}
-              className="fixed right-0 top-0 h-full w-full max-w-md bg-[#0f0f0f] z-[60] flex flex-col border-l border-white/10"
+              exit={{ x: 420 }}
+              transition={{
+                type: "tween",
+                duration: 0.25,
+                ease: [0.4, 0, 0.2, 1],
+              }}
+              role="dialog"
+              aria-label="Shopping cart"
+              className="
+          fixed right-0 top-0 z-[60]
+          h-full w-full max-w-md
+          bg-[#0b0b0b]
+          border-l border-white/10
+          flex flex-col
+        "
             >
-
-              {/* HEADER */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+              {/* ================= HEADER ================= */}
+              <header className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-semibold text-white">Your Cart</h2>
-                  <p className="text-xs text-gray-400">
-                    {cart.length} items
+                  <h2 className="text-white font-semibold text-base">
+                    Cart
+                  </h2>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {cart.length} {cart.length === 1 ? "item" : "items"}
                   </p>
                 </div>
 
                 <button
                   onClick={() => setIsCartOpen(false)}
-                  className="p-2 rounded-full hover:bg-white/10 transition"
+                  aria-label="Close cart"
+                  className="
+              h-9 w-9 rounded-md
+              flex items-center justify-center
+              hover:bg-white/10 active:scale-95 transition
+            "
                 >
-                  <FiX size={18} />
+                  <FiX size={16} />
                 </button>
-              </div>
+              </header>
 
-              {/* ITEMS */}
-              <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
-
+              {/* ================= CONTENT ================= */}
+              <div className="flex-1 overflow-y-auto">
                 {cart.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center">
-                    <p className="text-gray-400 text-sm">Your cart is empty</p>
+                  <div className="h-full flex flex-col items-center justify-center text-center px-6">
+                    <FiShoppingBag className="text-gray-500 mb-3" size={22} />
+                    <p className="text-gray-300 text-sm">Your cart is empty</p>
+                    <p className="text-gray-500 text-xs mt-1">
+                      Add items to continue
+                    </p>
+
                     <button
                       onClick={() => setIsCartOpen(false)}
-                      className="mt-4 text-sm text-teal-400 hover:underline"
+                      className="mt-5 text-sm text-teal-400 hover:text-teal-300"
                     >
-                      Browse menu
+                      Continue browsing
                     </button>
                   </div>
                 ) : (
-                  cart.map((item: CartItem) => (
-                    <div
-                      key={item.id}
-                      className="flex gap-4 items-center border-b border-white/5 pb-4"
-                    >
-                      {/* Image */}
-                      <img
-                        src={item.image}
-                        className="h-16 w-16 rounded-lg object-cover"
-                      />
+                  <ul className="divide-y divide-white/5">
+                    {cart.map((item: CartItem) => (
+                      <li
+                        key={item.id}
+                        className="
+                    flex gap-4 px-5 py-4
+                    hover:bg-white/[0.03]
+                    transition
+                  "
+                      >
+                        {/* IMAGE */}
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="h-14 w-14 rounded-md object-cover"
+                        />
 
-                      {/* Info */}
-                      <div className="flex-1">
-                        <h3 className="text-sm font-medium text-white">
-                          {item.name}
-                        </h3>
-                        <p className="text-xs text-gray-400">
-                          ₹{item.price}
-                        </p>
+                        {/* DETAILS */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white text-sm truncate">
+                            {item.name}
+                          </p>
 
-                        {/* Quantity Control */}
-                        <div className="flex items-center gap-3 mt-2">
-                          <button
-                            onClick={() => updateQty(item.id, -1)}
-                            className="h-7 w-7 flex items-center justify-center border border-white/10 rounded"
-                          >
-                            <FiMinus size={12} />
-                          </button>
+                          <p className="text-gray-400 text-xs mt-0.5">
+                            ₹{item.price} each
+                          </p>
 
-                          <span className="text-sm font-medium">
-                            {item.quantity}
-                          </span>
+                          {/* QUANTITY CONTROLS */}
+                          <div className="flex items-center gap-3 mt-2">
+                            <button
+                              onClick={() => updateQty(item.id, -1)}
+                              className="
+                          h-7 w-7 rounded
+                          border border-white/10
+                          flex items-center justify-center
+                          hover:bg-white/10 active:scale-95
+                        "
+                            >
+                              <FiMinus size={12} />
+                            </button>
 
-                          <button
-                            onClick={() => updateQty(item.id, 1)}
-                            className="h-7 w-7 flex items-center justify-center border border-white/10 rounded"
-                          >
-                            <FiPlus size={12} />
-                          </button>
+                            <span className="text-white text-sm w-6 text-center">
+                              {item.quantity}
+                            </span>
+
+                            <button
+                              onClick={() => updateQty(item.id, 1)}
+                              className="
+                          h-7 w-7 rounded
+                          border border-white/10
+                          flex items-center justify-center
+                          hover:bg-white/10 active:scale-95
+                        "
+                            >
+                              <FiPlus size={12} />
+                            </button>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Price */}
-                      <div className="text-sm font-medium text-white">
-                        ₹{item.price * item.quantity}
-                      </div>
-                    </div>
-                  ))
+                        {/* PRICE */}
+                        <div className="text-white text-sm font-medium">
+                          ₹{item.price * item.quantity}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
 
-              {/* BILL SUMMARY */}
+              {/* ================= FOOTER ================= */}
               {cart.length > 0 && (
-                <div className="border-t border-white/10 p-5 space-y-4 bg-[#111]">
-
-                  {/* Price Breakdown */}
-                  <div className="space-y-2 text-sm">
+                <footer className="border-t border-white/10 px-5 py-4 bg-black">
+                  <div className="space-y-2 text-sm mb-4">
                     <div className="flex justify-between text-gray-400">
-                      <span>Item Total</span>
+                      <span>Subtotal</span>
                       <span>₹{cartTotal}</span>
                     </div>
 
                     <div className="flex justify-between text-gray-400">
-                      <span>Delivery Fee</span>
+                      <span>Delivery</span>
                       <span>₹40</span>
                     </div>
 
@@ -659,142 +754,220 @@ export default function CulinaryOS() {
                       <span>₹{Math.floor(cartTotal * 0.05)}</span>
                     </div>
 
-                    <div className="flex justify-between text-white font-semibold border-t border-white/10 pt-2">
-                      <span>To Pay</span>
+                    <div className="flex justify-between text-white font-semibold pt-2 border-t border-white/10">
+                      <span>Total</span>
                       <span>
                         ₹{cartTotal + 40 + Math.floor(cartTotal * 0.05)}
                       </span>
                     </div>
                   </div>
 
-                  {/* CTA */}
                   <button
                     onClick={() => {
                       setOrderSuccess(true);
                       setIsCartOpen(false);
                     }}
-                    className="w-full py-4 rounded-lg bg-teal-500 text-black font-semibold hover:bg-teal-400 transition"
+                    className="
+                w-full py-3 rounded-md
+                bg-teal-500 text-black font-medium
+                hover:bg-teal-400 active:scale-[0.98]
+                transition
+              "
                   >
-                    Proceed to Checkout
+                    Checkout
                   </button>
-                </div>
+                </footer>
               )}
-            </motion.div>
+            </motion.aside>
           </>
         )}
       </AnimatePresence>
 
+      //mark-os
       {/* --- CULINARY PROVISIONING SUCCESS OVERLAY --- */}
       <AnimatePresence>
-  {orderSuccess && (
-    <motion.div
-      key="overlay"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-md flex items-center justify-center px-4"
-      onClick={() => setOrderSuccess(false)}
-    >
-      {/* MODAL */}
-      <motion.div
-        key="modal"
-        initial={{ opacity: 0, scale: 0.9, y: 40 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ type: "spring", stiffness: 220, damping: 18 }}
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.25)] p-6 text-center"
-      >
-        {/* SUCCESS ICON */}
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-          className="w-20 h-20 mx-auto mb-5 rounded-full bg-green-100 flex items-center justify-center"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            className="w-10 h-10 text-green-600"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        {orderSuccess && (
+          <motion.div
+            key="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+            onClick={() => setOrderSuccess(false)}
           >
-            <motion.path
-              d="M5 13l4 4L19 7"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+            {/* 🌌 layered backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/45 backdrop-blur-xl"
             />
-          </svg>
-        </motion.div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(255,255,255,0.08),transparent_60%)]" />
 
-        {/* TITLE */}
-        <motion.h2
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="text-xl font-semibold text-gray-900"
-        >
-          Order Confirmed 🎉
-        </motion.h2>
+            {/* 🧊 modal */}
+            <motion.div
+              key="modal"
+              initial={{ opacity: 0, y: 80, scale: 0.88 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 40, scale: 0.94 }}
+              transition={{
+                type: "spring",
+                stiffness: 160,
+                damping: 20,
+                mass: 0.8,
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="
+          relative w-full max-w-sm
+          rounded-[30px]
+          bg-white/65 backdrop-blur-2xl
+          border border-white/40
+          shadow-[0_30px_100px_rgba(0,0,0,0.45)]
+          p-6 text-center overflow-hidden
+        "
+            >
+              {/* ✨ light sweep */}
+              <motion.div
+                initial={{ x: "-100%", opacity: 0 }}
+                animate={{ x: "100%", opacity: 0.25 }}
+                transition={{ duration: 1.2, ease: "easeInOut", delay: 0.2 }}
+                className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-white/40 to-transparent blur-xl"
+              />
 
-        {/* SUBTEXT */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-sm text-gray-500 mt-2"
-        >
-          Your order has been successfully placed and is now being prepared.
-        </motion.p>
+              {/* ✅ success orb */}
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 14,
+                  delay: 0.25,
+                }}
+                className="relative w-20 h-20 mx-auto mb-6"
+              >
+                <div className="absolute inset-0 rounded-full bg-green-400/30 blur-3xl" />
 
-        {/* ETA */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="mt-5 bg-gray-100 rounded-lg py-3"
-        >
-          <p className="text-xs text-gray-500">Estimated Delivery</p>
-          <p className="text-lg font-semibold text-gray-900">
-            25–30 mins
-          </p>
-        </motion.div>
+                <div className="relative w-full h-full rounded-full bg-white/70 backdrop-blur-xl flex items-center justify-center shadow-inner">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-10 h-10 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <motion.path
+                      d="M5 13l4 4L19 7"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{
+                        duration: 0.55,
+                        ease: "easeInOut",
+                        delay: 0.35,
+                      }}
+                    />
+                  </svg>
+                </div>
+              </motion.div>
 
-        {/* ACTIONS */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="mt-6 space-y-3"
-        >
-          <button
-            onClick={() => {
-              setOrderSuccess(false);
-              setCart([]);
-            }}
-            className="w-full py-3 rounded-lg bg-black text-white font-medium hover:bg-gray-800 transition"
-          >
-            Continue Browsing
-          </button>
+              {/* 🧠 content cascade */}
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: { staggerChildren: 0.08, delayChildren: 0.35 },
+                  },
+                }}
+              >
+                <motion.h2
+                  variants={{
+                    hidden: { opacity: 0, y: 12 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  className="text-xl font-semibold text-gray-900"
+                >
+                  Order Confirmed
+                </motion.h2>
 
-          <button
-            onClick={() => {
-              setOrderSuccess(false);
-              setCart([]);
-              setIsCartOpen(true);
-            }}
-            className="w-full py-2 text-sm text-gray-500 hover:text-black transition"
-          >
-            View Cart Again
-          </button>
-        </motion.div>
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
+                <motion.p
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: { opacity: 1 },
+                  }}
+                  className="text-sm text-gray-600 mt-2 leading-relaxed"
+                >
+                  Your order is being prepared. You’ll receive updates shortly.
+                </motion.p>
+
+                {/* ⏱ ETA */}
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  className="
+              mt-6 rounded-xl
+              bg-white/60 backdrop-blur-md
+              border border-white/30
+              py-3
+            "
+                >
+                  <p className="text-xs text-gray-500">Estimated Delivery</p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    25–30 mins
+                  </p>
+                </motion.div>
+
+                {/* 🔘 actions */}
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  className="mt-6 space-y-3"
+                >
+                  <button
+                    onClick={() => {
+                      setOrderSuccess(false);
+                      setCart([]);
+                    }}
+                    className="
+                w-full py-3 rounded-xl
+                bg-black text-white font-medium
+                shadow-lg
+                active:scale-[0.96]
+                hover:shadow-xl
+                transition
+              "
+                  >
+                    Continue Browsing
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setOrderSuccess(false);
+                      setCart([]);
+                      setIsCartOpen(true);
+                    }}
+                    className="
+                w-full py-2 text-sm text-gray-500
+                hover:text-black
+                transition
+              "
+                  >
+                    View Cart Again
+                  </button>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
